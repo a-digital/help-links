@@ -68,6 +68,7 @@ class CpController extends Controller
         // Basic variables
         $variables['pluginName'] = $pluginName;
         $variables['title'] = $templateTitle;
+        $variables['selectedSubnavItem'] = 'sections';
         $variables['subSectionTitle'] = $subSectionTitle;
         $variables['settings'] = HelpLinks::$plugin->getSettings();
         $variables['sections'] = $variables['settings']['sections'];

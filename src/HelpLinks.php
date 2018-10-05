@@ -237,7 +237,7 @@ class HelpLinks extends Plugin
     {
         $subNavs = [];
         $navItem = parent::getCpNavItem();
-        $subNavs['authorities'] = [
+        $subNavs['sections'] = [
             'label' => 'Sections',
             'url' => 'help-links',
         ];
