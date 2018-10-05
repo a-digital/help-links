@@ -1,0 +1,41 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Help Links plugin for Craft CMS 3.x
+ *
+ * Help Links settings/authorities.twig
+ *
+ * @author    A Digital
+ * @copyright Copyright (c) 2018 A Digital
+ * @link      https://adigital.agency
+ * @package   HelpLinks
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{{ forms.editableTableField({
+    label: 'Links',
+    instructions: 'Add rows to creat links under this heading.',
+    id: 'links',
+    name: 'links',
+    cols: [
+	    {
+	    	heading: "Name",
+	    	info: "<p>Please enter the title of the link</p>",
+	    	type: "singleline"
+	    },
+	    {
+	    	heading: "Url",
+	    	info: "<p>Please enter the full url to the resource</p>",
+	    	type: "singleline"
+	    },
+	    {
+	    	heading: "Instruction",
+	    	info: "<p>Please enter an instruction if necessary or leave blank</p>",
+	    	type: "singleline"
+	    }
+    ],
+    rows: sectionSettings['links']
+}) }}

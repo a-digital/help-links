@@ -1,0 +1,27 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Help Links plugin for Craft CMS
+ *
+ * HelpLinksWidget Widget Body
+ *
+ * @author    A Digital
+ * @copyright Copyright (c) 2018 A Digital
+ * @link      https://adigital.agency
+ * @package   HelpLinks
+ * @since     1.0.0
+ */
+#}
+
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@adigital/helplinks/assetbundles/helplinkswidgetwidget/dist', true) ~ '/img/HelpLinksWidget-icon.svg' %}
+
+{#<img src="{{ iconUrl }}" height="64" width="64" />#}
+
+{% for section in sections %}
+	<h3>{{ section.heading }}</h3>
+	<p>
+		{% for link in section.links %}
+			<a href="{{ link[1] }}" target="_blank">{{ link[0] }}</a> {{ link[2] }}<br>
+		{% endfor %}
+	</p>
+{% endfor %}

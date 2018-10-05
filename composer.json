@@ -1,0 +1,43 @@
+{
+    "name": "adigital/help-links",
+    "description": "Define useful links to be added to the dashboard for clients.",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "help links"
+    ],
+    "support": {
+        "docs": "https://github.com/a-digital/help-links/blob/master/README.md",
+        "issues": "https://github.com/a-digital/help-links/issues"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "A Digital",
+            "homepage": "https://adigital.agency"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0-RC1"
+    },
+    "autoload": {
+        "psr-4": {
+          "adigital\\helplinks\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Help Links",
+        "handle": "help-links",
+        "hasCpSettings": true,
+        "hasCpSection": true,
+        "changelogUrl": "https://raw.githubusercontent.com/a-digital/help-links/master/CHANGELOG.md",
+        "components": {
+            "helpLinksService": "adigital\\helplinks\\services\\HelpLinksService"
+        },
+        "class": "adigital\\helplinks\\HelpLinks"
+    }
+}

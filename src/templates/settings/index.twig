@@ -1,0 +1,60 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Help Links plugin for Craft CMS 3.x
+ *
+ * Help Links settings/index.twig
+ *
+ * @author    A Digital
+ * @copyright Copyright (c) 2018 A Digital
+ * @link      https://adigital.agency
+ * @package   HelpLinks
+ * @since     1.0.0
+ */
+#}
+
+{% extends "_layouts/cp" %}
+
+{# Link for the ? icon at the bottom of the page #}
+{% set docsUrl = "https://github.com/a-digital/help-links/blob/master/README.md" %}
+
+{# The title of this CP section #}
+{% set title = "Help Links" %}
+
+{# The URL to this plugin's base CP section #}
+{% set pluginCpUrl = url('help-links') %}
+
+{% set fullPageForm = true %}
+
+{# The content of the CP Section #}
+{% set content %}
+	<input type="hidden" name="action" value="help-links/cp/save-plugin-settings">
+    <input type="hidden" name="pluginHandle" value="help-links">
+    {{ redirectInput("help-links/plugin") }}
+    {% namespace "settings" %}
+    	{% import "_includes/forms" as forms %}
+		
+		{{ forms.textField({
+		    label: 'Widget Title',
+		    instructions: 'This will be the main title of the widget',
+		    id: 'widgetTitle',
+		    name: 'widgetTitle',
+		    value: settings['widgetTitle']})
+		}}
+		
+		{{ forms.editableTableField({
+		    label: 'Sections',
+		    instructions: 'Please define some sections for your links',
+		    id: 'Sections',
+		    name: 'sections',
+		    cols: [
+			    {
+			    	heading: "Heading",
+			    	info: "<p>This will act as a heading to separate out the content</p>",
+			    	type: "singleline"
+			    }
+		    ],
+		    rows: settings['sections']
+		}) }}
+    {% endnamespace %}
+{% endset %}

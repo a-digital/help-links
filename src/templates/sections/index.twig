@@ -1,0 +1,62 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Help Links plugin for Craft CMS 3.x
+ *
+ * Help Links index.twig
+ *
+ * @author    A Digital
+ * @copyright Copyright (c) 2018 A Digital
+ * @link      https://adigital.agency
+ * @package   HelpLinks
+ * @since     1.0.0
+ */
+#}
+
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{# Link for the ? icon at the bottom of the page #}
+{% set docsUrl = "https://github.com/a-digital/help-links/blob/master/README.md" %}
+
+{# The title of this CP section #}
+{% set title = "Help Links" %}
+
+{# The URL to this plugin's base CP section #}
+{% set pluginCpUrl = url('help-links') %}
+
+{% set navItems = {
+    'heading': { heading: "Sections"|t },
+} %}
+{% for location in settings["sections"] %}
+	{% set friendlyUrl = location[0]|replace({" ": "", "-": ""})|lower %}
+	{% set navItems = navItems |merge({
+	    (friendlyUrl): {
+	        title: location[0]|t("help-links"),
+	    },
+	}) %}
+{% endfor %}
+
+{% block sidebar %}
+    <nav>
+        <ul>
+            {% for id, item in navItems %}
+                {% if item.heading is defined %}
+                    <li class="heading"><span>{{ item.heading }}</span></li>
+                {% else %}
+                    <li><a href="{{ url("help-links/sections/#{id}") }}"{% if item.title == selectedItem %} class="sel"{% endif %}>{{ item.title }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+{% endblock %}
+
+{# The content of the CP Section #}
+{% set content %}
+    <h2>{{ selectedItem ~ " specific pricing"|t('help-links') }}</h2>
+    <p class="textline">Below you will be able to update the links for the {{ selectedItem }} section heading. All of these will ne displayed in the widget once added to the dashboard.</p>
+    <input type="hidden" name="action" value="help-links/cp/save-sections">
+    <input type="hidden" name="pluginHandle" value="help-links">
+    <input type="hidden" name="heading" value="{{ selectedItem }}">
+	{% include 'help-links/sections/settings' %}
+{% endset %}
