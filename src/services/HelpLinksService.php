@@ -110,4 +110,30 @@ class HelpLinksService extends Component
         $model->save();
         return $model;
     }
+    
+    /**
+     * This function can literally be anything you want, and you can have as many service
+     * functions as you want
+     *
+     * From any other plugin file, call it like this:
+     *
+     *     HelpLinks::$plugin->helpLinksService->generateSection()
+     *
+     * @return mixed
+     */
+    public function generateSection($request)
+    {
+        $modelSection = [
+	        "links" => $request["links"]
+        ];
+        
+        $model = SectionsRecord::findOne(['heading' => $request["heading"]]);
+        if ($model === null) {
+	    	$model = new SectionsRecord();
+	    	$modelSection["heading"] = $request["heading"];
+	    }
+        $model->setAttributes($modelSection, false);
+        $model->save();
+        return $model;
+    }
 }
