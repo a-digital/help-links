@@ -100,8 +100,8 @@ class HelpLinksService extends Component
      */
     public function saveSection($request)
     {
-        $modelSection = [
-	        "links" => $request->getParam("links")
+	    $modelSection = [
+	        "links" => array_merge($request->getParam("links"))
         ];
         
         $model = SectionsRecord::findOne(['heading' => $request->getParam("heading")]);
