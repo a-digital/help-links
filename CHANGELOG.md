@@ -1,5 +1,9 @@
 # Help Links Changelog
 
+## 1.0.5 - 2018-10-08
+### Changed
+- Updated instructional text
+
 ## 1.0.4 - 2018-10-08
 ### Fixed
 - Fixed an issue when reordering links in the table field. Returned an empty field after saving due to array keys
