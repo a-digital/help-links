@@ -245,6 +245,10 @@ class HelpLinks extends Plugin
             'label' => 'Plugin Settings',
             'url' => 'help-links/plugin',
         ];
+        $subNavs['import'] = [
+            'label' => 'Import / Export',
+            'url' => 'help-links/import',
+        ];
         $navItem = array_merge($navItem, [
             'subnav' => $subNavs,
         ]);
@@ -268,7 +272,13 @@ class HelpLinks extends Plugin
             ],
             'help-links/sections/<subSection:{handle}>' => 'help-links/cp',
 
-            'help-links/plugin' => 'help-links/cp/plugin'
+            'help-links/plugin' => 'help-links/cp/plugin',
+            
+            'help-links/export' => 'help-links/cp/export',
+            
+            'help-links/import' => 'help-links/cp/import',
+            
+            'help-links/import/process' => 'help-links/cp/processImport'
         ];
     }
 }
