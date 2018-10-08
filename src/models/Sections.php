@@ -38,6 +38,7 @@ class Sections extends Model
      * @var string
      */
     public $links = [['', '', '']];
+    public $position = '0';
 
     // Public Methods
     // =========================================================================
@@ -55,7 +56,10 @@ class Sections extends Model
     public function rules()
     {
         return [
-            ['links', 'default', 'value' => [['', '', '']]]
+            ['links', 'default', 'value' => [['', '', '']]],
+            
+            ['position', 'string'],
+            ['position', 'default', 'value' => '0'],
         ];
     }
 }

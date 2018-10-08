@@ -67,14 +67,17 @@ class HelpLinksService extends Component
      *
      * @return mixed
      */
-    public function createSection($section)
+    public function createSection($section, $count)
     {
         $modelSection = [
-	        "links" => "[['', '', '']]"
+	        "links" => "[['', '', '']]",
+	        "position" => $count
         ];
         
         $model = SectionsRecord::findOne(['heading' => $section]);
         if ($model !== null) {
+	        $model->setAttribute("position", $count);
+	        $model->save();
 	        return $model;
 	    }
 	    
@@ -124,7 +127,8 @@ class HelpLinksService extends Component
     public function importSection($title, $links = [], $count)
     {
         $modelSection = [
-	        "links" => $links
+	        "links" => $links,
+	        "position" => $count
         ];
         
         $model = SectionsRecord::findOne(['heading' => $title]);

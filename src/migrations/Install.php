@@ -108,6 +108,7 @@ class Install extends Migration
                 // Custom columns in the table
                     'heading' => $this->string(255)->notNull()->defaultValue(''),
                     'links' => $this->text(),
+                    'position' => $this->string(255)->notNull()->defaultValue(''),
                 // Default columns
                 	'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
