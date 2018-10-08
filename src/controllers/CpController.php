@@ -193,4 +193,28 @@ class CpController extends Controller
         Craft::$app->getSession()->setNotice(Craft::t('app', 'Plugin settings saved.'));
         return $this->redirectToPostedUrl();
     }
+    
+    /**
+     * Exports a plugin’s settings.
+     *
+     * @return Response|null
+     * @throws NotFoundHttpException if the requested plugin cannot be found
+     * @throws \yii\web\BadRequestHttpException
+     * @throws \craft\errors\MissingComponentException
+     */
+    public function actionExport()
+    {
+        $pluginSettings = HelpLinks::$plugin->getSettings();
+        $settings = [];
+        $settings["plugin"]["widgetTitle"] = $pluginSettings["widgetTitle"];
+        foreach($pluginSettings["sections"] as $section) {
+	        $sectionSettings = HelpLinks::$plugin->helpLinksService->returnSection($section[0]);
+	        $settings["plugin"]["sections"][] = [$sectionSettings["heading"]];
+	        $settings["sections"][$sectionSettings["heading"]] = $sectionSettings["links"];
+        }
+        $json = json_encode($settings);
+        header('Content-disposition: attachment; filename=helplinks_settings.json');
+		header('Content-type: application/json');
+        return $json;
+    }
 }
