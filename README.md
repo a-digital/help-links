@@ -2,8 +2,6 @@
 
 Define useful links to be added to the dashboard for clients.
 
-![Screenshot](resources/img/plugin-logo.png)
-
 ## Requirements
 
 This plugin requires Craft CMS 3.0.0-beta.23 or later.
