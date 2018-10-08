@@ -1,5 +1,16 @@
 # Help Links Changelog
 
+## 1.0.3 - 2018-10-08
+### Fixed
+- Various typos in instructions
+- GitHub links to the correct repo branch
+
+### Changed
+- Plugin logo
+
+### Added
+- Sections are now removed and reordered when settings are updated
+
 ## 1.0.2 - 2018-10-08
 ### Added
 - Export settings and links to a JSON file

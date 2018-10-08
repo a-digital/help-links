@@ -59,6 +59,7 @@ Craft::$app->plugins->savePluginSettings($plugin, $settings);
 
 $request = [];
 $request["heading"] = "Documentation";
+$request["position"] = "1";
 $request["links"][] = [
 	"Test",
 	"http://www.test.com",
@@ -73,6 +74,7 @@ HelpLinks::$plugin->helpLinksService->generateSection($request);
 
 $request = [];
 $request["heading"] = "Support";
+$request["position"] = "2";
 $request["links"][] = [
 	"Zendesk",
 	"https://adigital.zendesk.com/agent/filters",
