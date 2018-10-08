@@ -32,7 +32,15 @@ Create your section headings in the plugin settings page. Then click Help Links 
 
 ## Pre Populating Help Links
 
-If like us you are going to be using this for multiple clients but most of the links will remain the same, then you can add a migration to pre-populate your settings and links for this plugin. Create a content migration file and run it once the plugin is installed and then you can edit the settings in the usual way as needed.
+If like us you are going to be using this for multiple clients but most of the links will remain the same, then you can pre-populate your settings and links for this plugin. There are 2 ways of doing this.
+
+### Import / Export using the plugin
+
+We've created an Import / Export page within the plugin which you can use. Once you have manually populated the links on one site, you can export these to a JSON formatted file. This file can then be imported into a clean install and it will generate all of your links for you. From here you can then edit them as needed to make them site specific. This is our recommended method for pre populating your links.
+
+### Use a migration
+
+You can also create a content migration and run it within the CMS once the plugin is installed. You can then edit the settings in the usual way as needed.
 
 Further reading on content migrations in Craft 3 can be found here: [Using Content Migrations in Craft 3](https://adigital.agency/blog/using-content-migrations-in-craft-3).
 
