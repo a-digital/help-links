@@ -67,7 +67,7 @@ class HelpLinksService extends Component
      *
      * @return mixed
      */
-    public function createSection($section, $settings)
+    public function createSection($section)
     {
         $modelSection = [
 	        "links" => "[['', '', '']]"

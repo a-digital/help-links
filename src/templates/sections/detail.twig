@@ -3,7 +3,7 @@
 /**
  * Help Links plugin for Craft CMS 3.x
  *
- * Help Links Settings.twig
+ * Help Links index.twig
  *
  * @author    A Digital
  * @copyright Copyright (c) 2018 A Digital
@@ -20,7 +20,7 @@
 {% set docsUrl = "https://github.com/a-digital/help-links/blob/master/README.md" %}
 
 {# The title of this CP section #}
-{% set title = "Help Links" %}
+{% set title = selectedItem %}
 
 {# The URL to this plugin's base CP section #}
 {% set pluginCpUrl = url('help-links') %}
@@ -36,7 +36,6 @@
 	    },
 	}) %}
 {% endfor %}
-{% set selectedItem = craft.app.request.getSegment(3)|default("overview") %}
 
 {% block sidebar %}
     <nav>
@@ -45,7 +44,7 @@
                 {% if item.heading is defined %}
                     <li class="heading"><span>{{ item.heading }}</span></li>
                 {% else %}
-                    <li><a href="{{ url("help-links/sections/#{id}") }}"{% if id == selectedItem %} class="sel"{% endif %}>{{ item.title }}</a></li>
+                    <li><a href="{{ url("help-links/sections/#{id}") }}"{% if item.title == selectedItem %} class="sel"{% endif %}>{{ item.title }}</a></li>
                 {% endif %}
             {% endfor %}
         </ul>
@@ -54,9 +53,10 @@
 
 {# The content of the CP Section #}
 {% set content %}
-    <h2>{{ "Sections"|t('help-links') }}</h2>
-    <p class="textline">Sections can be created within the plugin settings and they will be added to the navigation on this page.</p>
-    <p class="textline">Each section will start out with an empty table field which you can use to populate your links and add comments. These are created on a per section basis.</p>
-    <p class="textline">Please click into a section using this pages navigation to start adding links.</p>
-    <p class="textline">Once your links are created you can add the widget to your dashboard to display them.</p>
+    <h2>{{ selectedItem ~ " specific pricing"|t('help-links') }}</h2>
+    <p class="textline">Below you will be able to update the links for the {{ selectedItem }} section heading. All of these will ne displayed in the widget once added to the dashboard.</p>
+    <input type="hidden" name="action" value="help-links/cp/save-sections">
+    <input type="hidden" name="pluginHandle" value="help-links">
+    <input type="hidden" name="heading" value="{{ selectedItem }}">
+	{% include 'help-links/sections/settings' %}
 {% endset %}

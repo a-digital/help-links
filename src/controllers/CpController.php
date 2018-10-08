@@ -98,21 +98,14 @@ class CpController extends Controller
         // Render the template
         $template = 'help-links/sections/index';
         if ($subSection == "overview") {
-	        $variables['crumbs'][] = [
-		        'label' => $subSectionTitle,
-                'url' => UrlHelper::cpUrl('help-links/sections/').$subSection,
-	        ];
-	        $template = 'help-links/index';
+	        $template = 'help-links/sections/index';
         } else {
-	        $variables['crumbs'][] = [
-                'label' => $variables['selectedItem'],
-                'url' => UrlHelper::cpUrl('help-links/sections/').$subSection,
-            ];
 	        $variables['fullPageForm'] = true;
 	        $sectionSettings = HelpLinks::$plugin->helpLinksService->returnSection($variables['selectedItem']);
 	        if ($sectionSettings !== false) {
 		        $variables['sectionSettings'] = $sectionSettings;
 	        }
+	        $template = 'help-links/sections/detail';
         }
         return $this->renderTemplate($template, $variables);
     }
@@ -144,10 +137,6 @@ class CpController extends Controller
             [
                 'label' => "Help Links",
                 'url' => UrlHelper::cpUrl('help-links')
-            ],
-            [
-                'label' => "Plugin Settings",
-                'url' => UrlHelper::cpUrl('help-links/plugin')
             ]
         ];
         $variables['settings'] = HelpLinks::$plugin->getSettings();
@@ -187,7 +176,7 @@ class CpController extends Controller
         
         $settings = HelpLinks::$plugin->getSettings();
         foreach($settings["sections"] as $section) {
-	        HelpLinks::$plugin->helpLinksService->createSection($section[0], $settings);
+	        HelpLinks::$plugin->helpLinksService->createSection($section[0]);
         }
 
         Craft::$app->getSession()->setNotice(Craft::t('app', 'Plugin settings saved.'));
