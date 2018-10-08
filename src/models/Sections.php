@@ -16,7 +16,7 @@ use Craft;
 use craft\base\Model;
 
 /**
- * Authorities Model
+ * Sections Model
  *
  * Models are containers for data. Just about every time information is passed
  * between services, controllers, and templates in Craft, it’s passed via a model.

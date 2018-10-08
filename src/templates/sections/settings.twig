@@ -3,7 +3,7 @@
 /**
  * Help Links plugin for Craft CMS 3.x
  *
- * Help Links settings/authorities.twig
+ * Help Links sections/settings.twig
  *
  * @author    A Digital
  * @copyright Copyright (c) 2018 A Digital
@@ -17,7 +17,7 @@
 
 {{ forms.editableTableField({
     label: 'Links',
-    instructions: 'Add rows to creat links under this heading.',
+    instructions: 'Add rows to create links under this heading.',
     id: 'links',
     name: 'links',
     cols: [
@@ -27,13 +27,13 @@
 	    	type: "singleline"
 	    },
 	    {
-	    	heading: "Url",
+	    	heading: "URL",
 	    	info: "<p>Please enter the full url to the resource</p>",
 	    	type: "singleline"
 	    },
 	    {
 	    	heading: "Instruction",
-	    	info: "<p>Please enter an instruction if necessary or leave blank</p>",
+	    	info: "<p>Please enter an instruction if necessary or leave it blank</p>",
 	    	type: "singleline"
 	    }
     ],

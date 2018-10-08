@@ -11,7 +11,7 @@
         "help links"
     ],
     "support": {
-        "docs": "https://github.com/a-digital/help-links/blob/master/README.md",
+        "docs": "https://github.com/a-digital/help-links/blob/craft3/README.md",
         "issues": "https://github.com/a-digital/help-links/issues"
     },
     "license": "MIT",
@@ -34,7 +34,7 @@
         "handle": "help-links",
         "hasCpSettings": true,
         "hasCpSection": true,
-        "changelogUrl": "https://raw.githubusercontent.com/a-digital/help-links/master/CHANGELOG.md",
+        "changelogUrl": "https://raw.githubusercontent.com/a-digital/help-links/craft3/CHANGELOG.md",
         "components": {
             "helpLinksService": "adigital\\helplinks\\services\\HelpLinksService"
         },

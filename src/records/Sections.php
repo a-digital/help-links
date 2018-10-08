@@ -16,7 +16,7 @@ use Craft;
 use craft\db\ActiveRecord;
 
 /**
- * Authorities Record
+ * Sections Record
  *
  * ActiveRecord is the base class for classes representing relational data in terms of objects.
  *

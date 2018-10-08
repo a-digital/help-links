@@ -17,7 +17,7 @@
 {% import "_includes/forms" as forms %}
 
 {# Link for the ? icon at the bottom of the page #}
-{% set docsUrl = "https://github.com/a-digital/help-links/blob/master/README.md" %}
+{% set docsUrl = "https://github.com/a-digital/help-links/blob/craft3/README.md" %}
 
 {# The title of this CP section #}
 {% set title = selectedItem %}
@@ -54,7 +54,7 @@
 {# The content of the CP Section #}
 {% set content %}
     <h2>{{ selectedItem ~ " specific pricing"|t('help-links') }}</h2>
-    <p class="textline">Below you will be able to update the links for the {{ selectedItem }} section heading. All of these will ne displayed in the widget once added to the dashboard.</p>
+    <p class="textline">Below you will be able to update the links for the {{ selectedItem }} section heading. All of these will be displayed in the widget once added to the dashboard.</p>
     <input type="hidden" name="action" value="help-links/cp/save-sections">
     <input type="hidden" name="pluginHandle" value="help-links">
     <input type="hidden" name="heading" value="{{ selectedItem }}">

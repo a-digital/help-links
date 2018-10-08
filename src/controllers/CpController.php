@@ -119,7 +119,7 @@ class CpController extends Controller
     {
         $request = Craft::$app->getRequest();
         HelpLinks::$plugin->helpLinksService->saveSection($request);
-        Craft::$app->getSession()->setNotice(Craft::t('help-links', 'Help Links authority saved.'));
+        Craft::$app->getSession()->setNotice(Craft::t('help-links', 'Help Links section saved.'));
         return $this->redirectToPostedUrl();
     }
     
