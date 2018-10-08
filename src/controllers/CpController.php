@@ -206,4 +206,46 @@ class CpController extends Controller
 		header('Content-type: application/json');
         return $json;
     }
+    
+    /**
+     * Imports a plugin’s settings.
+     *
+     * @return Response|null
+     * @throws NotFoundHttpException if the requested plugin cannot be found
+     * @throws \yii\web\BadRequestHttpException
+     * @throws \craft\errors\MissingComponentException
+     */
+    public function actionImport()
+    {
+        $variables = [];
+	    $variables['selectedSubnavItem'] = 'import';
+	    $variables['crumbs'] = [
+            [
+                'label' => "Help Links",
+                'url' => UrlHelper::cpUrl('help-links')
+            ]
+        ];
+        $variables['settings'] = HelpLinks::$plugin->getSettings();
+	    
+	    return $this->renderTemplate('help-links/import', $variables);
+    }
+    
+    /**
+     * Processes a JSON file to import a plugin’s settings.
+     *
+     * @return Response|null
+     * @throws NotFoundHttpException if the requested plugin cannot be found
+     * @throws \yii\web\BadRequestHttpException
+     * @throws \craft\errors\MissingComponentException
+     */
+    public function actionProcessImport()
+    {
+	    $this->requirePostRequest();
+	    $request = Craft::$app->getRequest();
+	    if (count($_FILES)) {
+		    HelpLinks::$plugin->helpLinksService->importSettings($_FILES);
+	    }
+	    Craft::$app->getSession()->setNotice(Craft::t('app', 'Plugin settings imported.'));
+	    return $this->redirectToPostedUrl();
+    }
 }

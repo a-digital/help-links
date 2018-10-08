@@ -117,6 +117,32 @@ class HelpLinksService extends Component
      *
      * From any other plugin file, call it like this:
      *
+     *     HelpLinks::$plugin->helpLinksService->importSection()
+     *
+     * @return mixed
+     */
+    public function importSection($title, $links = [])
+    {
+        $modelSection = [
+	        "links" => $links
+        ];
+        
+        $model = SectionsRecord::findOne(['heading' => $title]);
+        if ($model === null) {
+	    	$model = new SectionsRecord();
+	    	$modelSection["heading"] = $title;
+	    }
+        $model->setAttributes($modelSection, false);
+        $model->save();
+        return $model;
+    }
+    
+    /**
+     * This function can literally be anything you want, and you can have as many service
+     * functions as you want
+     *
+     * From any other plugin file, call it like this:
+     *
      *     HelpLinks::$plugin->helpLinksService->generateSection()
      *
      * @return mixed
@@ -135,5 +161,34 @@ class HelpLinksService extends Component
         $model->setAttributes($modelSection, false);
         $model->save();
         return $model;
+    }
+    
+    /**
+     * This function can literally be anything you want, and you can have as many service
+     * functions as you want
+     *
+     * From any other plugin file, call it like this:
+     *
+     *     HelpLinks::$plugin->helpLinksService->importSettings()
+     *
+     * @return mixed
+     */
+    public function importSettings($attachments)
+    {
+	    $file = $attachments["jsonSettings"]["tmp_name"];
+	    
+	    $filedata = file_get_contents($file);
+	    $jsonSettings = json_decode($filedata);
+	    
+	    $pluginSettings = (array)$jsonSettings->plugin;
+	    $sectionSettings = $jsonSettings->sections;
+	    
+	    $plugin = Craft::$app->getPlugins()->getPlugin("help-links");
+	    Craft::$app->getPlugins()->savePluginSettings($plugin, $pluginSettings);
+	    foreach($sectionSettings as $key => $section) {
+	        HelpLinks::$plugin->helpLinksService->importSection($key, $section);
+        }
+	    
+		return true;
     }
 }
