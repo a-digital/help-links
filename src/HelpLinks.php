@@ -18,6 +18,7 @@ use Craft;
 use craft\base\Plugin;
 use craft\services\Plugins;
 use craft\services\Dashboard;
+use craft\services\UserPermissions;
 use craft\events\PluginEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterUserPermissionsEvent;
@@ -199,6 +200,19 @@ class HelpLinks extends Plugin
                 );
             }
         );
+        // Handler: UserPermissions::EVENT_REGISTER_PERMISSIONS
+        Event::on(
+            UserPermissions::class,
+            UserPermissions::EVENT_REGISTER_PERMISSIONS,
+            function (RegisterUserPermissionsEvent $event) {
+                Craft::debug(
+                    'UserPermissions::EVENT_REGISTER_PERMISSIONS',
+                    __METHOD__
+                );
+                // Register our custom permissions
+                $event->permissions[Craft::t('help-links', 'Help Links')] = $this->customAdminCpPermissions();
+            }
+        );
     }
 
     // Protected Methods
@@ -236,22 +250,37 @@ class HelpLinks extends Plugin
     public function getCpNavItem()
     {
         $subNavs = [];
+        $show = false;
         $navItem = parent::getCpNavItem();
-        $subNavs['sections'] = [
-            'label' => 'Sections',
-            'url' => 'help-links',
-        ];
-        $subNavs['plugin'] = [
-            'label' => 'Plugin Settings',
-            'url' => 'help-links/plugin',
-        ];
-        $subNavs['import'] = [
-            'label' => 'Import / Export',
-            'url' => 'help-links/import',
-        ];
-        $navItem = array_merge($navItem, [
-            'subnav' => $subNavs,
-        ]);
+        /** @var User $currentUser */
+        $currentUser = Craft::$app->getUser()->getIdentity();
+        // Only show sub-navs the user has permission to view
+        if ($currentUser->can('helpLinks:sections')) {
+	        $subNavs['sections'] = [
+	            'label' => 'Sections',
+	            'url' => 'help-links',
+	        ];
+	        $show = true;
+	    }
+	    if ($currentUser->can('helpLinks:settings')) {
+	        $subNavs['plugin'] = [
+	            'label' => 'Plugin Settings',
+	            'url' => 'help-links/plugin',
+	        ];
+	        $show = true;
+        }
+        if ($currentUser->can('helpLinks:importExport')) {
+	        $subNavs['import'] = [
+	            'label' => 'Import / Export',
+	            'url' => 'help-links/import',
+	        ];
+	        $show = true;
+        }
+        if ($show === true) {
+	        $navItem = array_merge($navItem, [
+	            'subnav' => $subNavs,
+	        ]);
+        }
 
         return $navItem;
     }
@@ -279,6 +308,33 @@ class HelpLinks extends Plugin
             'help-links/import' => 'help-links/cp/import',
             
             'help-links/import/process' => 'help-links/cp/processImport'
+        ];
+    }
+    
+    /**
+     * Returns the custom AdminCP user permissions.
+     *
+     * @return array
+     */
+    protected function customAdminCpPermissions(): array
+    {
+        // The script meta containers for the global meta bundle
+        try {
+            $currentSiteId = Craft::$app->getSites()->getCurrentSite()->id ?? 1;
+        } catch (SiteNotFoundException $e) {
+            $currentSiteId = 1;
+        }
+
+        return [
+            'helpLinks:sections' => [
+                'label' => Craft::t('help-links', 'Manage the widgets links under each heading'),
+            ],
+            'helpLinks:settings' => [
+                'label' => Craft::t('help-links', 'Manage the headings available to the widget'),
+            ],
+            'helpLinks:importExport' => [
+                'label' => Craft::t('help-links', 'Import / Export the settings and links'),
+            ],
         ];
     }
 }
