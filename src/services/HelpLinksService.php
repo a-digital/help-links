@@ -121,7 +121,7 @@ class HelpLinksService extends Component
      *
      * @return mixed
      */
-    public function importSection($title, $links = [])
+    public function importSection($title, $links = [], $count)
     {
         $modelSection = [
 	        "links" => $links
@@ -185,10 +185,41 @@ class HelpLinksService extends Component
 	    
 	    $plugin = Craft::$app->getPlugins()->getPlugin("help-links");
 	    Craft::$app->getPlugins()->savePluginSettings($plugin, $pluginSettings);
+	    $sections = [];
+	    $count = 1;
 	    foreach($sectionSettings as $key => $section) {
-	        HelpLinks::$plugin->helpLinksService->importSection($key, $section);
+	        HelpLinks::$plugin->helpLinksService->importSection($key, $section, $count);
+	        $sections[] = $key;
+	        $count++;
         }
+        
+        HelpLinks::$plugin->helpLinksService->removeSections($sections);
 	    
 		return true;
     }
+    
+    /**
+     * This function can literally be anything you want, and you can have as many service
+     * functions as you want
+     *
+     * From any other plugin file, call it like this:
+     *
+     *     HelpLinks::$plugin->helpLinksService->removeSections()
+     *
+     * @return mixed
+     */
+    public function removeSections($sectionTitles)
+    {
+	    $models = SectionsRecord::find()->where([
+	    	'not in',
+	    	'heading',
+	    	$sectionTitles
+	    ])->all();
+	    if (isset($models) && (is_array($models) || is_object($models)) && ($models instanceof \Countable || count($models) > 0)) {
+		    foreach($models as $model) {
+			    $model->delete();
+		    }
+	    }
+	    return true;
+	}
 }

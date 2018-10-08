@@ -174,10 +174,15 @@ class CpController extends Controller
             return null;
         }
         
+        $sections = [];
         $settings = HelpLinks::$plugin->getSettings();
+        $count = 1;
         foreach($settings["sections"] as $section) {
-	        HelpLinks::$plugin->helpLinksService->createSection($section[0]);
+	        HelpLinks::$plugin->helpLinksService->createSection($section[0], $count);
+	        $sections[] = $section[0];
+	        $count++;
         }
+        HelpLinks::$plugin->helpLinksService->removeSections($sections);
 
         Craft::$app->getSession()->setNotice(Craft::t('app', 'Plugin settings saved.'));
         return $this->redirectToPostedUrl();
