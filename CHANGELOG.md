@@ -1,5 +1,15 @@
 # Help Links Changelog
 
+## 1.0.4 - 2018-10-08
+### Fixed
+- Fixed an issue when reordering links in the table field. Returned an empty field after saving due to array keys
+
+### Changed
+- Added link to Katie Fritz dot all talk
+
+### Added
+- User permissions now included for plugin sections
+
 ## 1.0.3 - 2018-10-08
 ### Fixed
 - Various typos in instructions
