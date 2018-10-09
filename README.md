@@ -87,11 +87,28 @@ Once configured, add the widget to your dashboard.
 
 ## Screenshots
 
+### Dashboard
+
 ![Dashboard](resources/img/dashboard.png)
+
+### Settings
+
 ![Settings](resources/img/settings.png)
+
+### Section Links
+
 ![Section Links](resources/img/section-links.png)
+
+### Rename Headings
+
 ![Rename Headings](resources/img/rename.png)
+
+### Import / Export
+
 ![Import / Export](resources/img/import-export.png)
+
+### Permissions
+
 ![Permissions](resources/img/permissions.png)
 
 Brought to you by [A Digital](https://adigital.agency)
