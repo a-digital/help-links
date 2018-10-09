@@ -1,0 +1,48 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Help Links plugin for Craft CMS 3.x
+ *
+ * Help Links index.twig
+ *
+ * @author    A Digital
+ * @copyright Copyright (c) 2018 A Digital
+ * @link      https://adigital.agency
+ * @package   HelpLinks
+ * @since     1.0.0
+ */
+#}
+
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{# Link for the ? icon at the bottom of the page #}
+{% set docsUrl = "https://github.com/a-digital/help-links/blob/craft3/README.md" %}
+
+{# The title of this CP section #}
+{% set title = "Rename Headings" %}
+
+{# The URL to this plugin's base CP section #}
+{% set pluginCpUrl = url('help-links') %}
+
+{# The content of the CP Section #}
+{% set content %}
+    <h2>{{ "Sections"|t('help-links') }}</h2>
+    <p class="textline">Sections can be created within the plugin settings and they will be added to the navigation on this page.</p>
+    <p class="textline">Each section will start out with an empty table field which you can use to populate your links and add comments. These are created on a per section basis.</p>
+    <p class="textline">Please click into a section using this pages navigation to start adding links.</p>
+    <p class="textline">Once your links are created you can add the widget to your dashboard to display them.</p>
+    
+    <input type="hidden" name="action" value="help-links/cp/save-rename">
+    <input type="hidden" name="pluginHandle" value="help-links">
+    {{ redirectInput("help-links/plugin") }}
+    {% for key,section in settings.sections %}
+    	{{ forms.textField({
+		    label: section[0],
+		    instructions: 'Please enter the new heading or leave it as the existing value',
+		    id: 'section['~section[0]~']',
+		    name: 'section['~section[0]~']',
+		    value: section[0]
+		}) }}
+    {% endfor %}
+{% endset %}
