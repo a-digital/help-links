@@ -58,7 +58,6 @@ class Install extends Migration
         $this->driver = Craft::$app->getConfig()->getDb()->driver;
         if ($this->createTables()) {
             $this->createIndexes();
-            $this->addForeignKeys();
             // Refresh the db schema caches
             Craft::$app->db->schema->refresh();
             $this->insertDefaultData();
@@ -137,32 +136,6 @@ class Install extends Migration
             '{{%helplinks_sections}}',
             'heading',
             true
-        );
-        // Additional commands depending on the db driver
-        switch ($this->driver) {
-            case DbConfig::DRIVER_MYSQL:
-                break;
-            case DbConfig::DRIVER_PGSQL:
-                break;
-        }
-    }
-
-    /**
-     * Creates the foreign keys needed for the Records used by the plugin
-     *
-     * @return void
-     */
-    protected function addForeignKeys()
-    {
-    // helplinks_sections table
-        $this->addForeignKey(
-            $this->db->getForeignKeyName('{{%helplinks_sections}}', 'siteId'),
-            '{{%helplinks_sections}}',
-            'siteId',
-            '{{%sites}}',
-            'id',
-            'CASCADE',
-            'CASCADE'
         );
     }
 
