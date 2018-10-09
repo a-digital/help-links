@@ -226,4 +226,44 @@ class HelpLinksService extends Component
 	    }
 	    return true;
 	}
+	
+	/**
+     * This function can literally be anything you want, and you can have as many service
+     * functions as you want
+     *
+     * From any other plugin file, call it like this:
+     *
+     *     HelpLinks::$plugin->helpLinksService->saveRename()
+     *
+     * @return mixed
+     */
+    public function saveRename($request)
+    {
+	    $sections = $request->getParam("section");
+	    $pluginSections = [];
+	    foreach($sections as $old => $new) {
+		    if ($old !== $new) {
+			    $model = SectionsRecord::findOne(['heading' => $old]);
+			    $model->setAttribute("heading", $new);
+			    $model->save();
+		    }
+		    $pluginSections[] = [$new];
+	    }
+	    
+        $pluginModel = Craft::$app->getPlugins()->getPlugin("help-links");
+
+        if ($pluginModel === null) {
+            throw new NotFoundHttpException('Plugin not found');
+        }
+        
+        $settings = HelpLinks::$plugin->getSettings();
+        $settings["sections"] = $pluginSections;
+
+        if (!Craft::$app->getPlugins()->savePluginSettings($pluginModel, (array)$settings)) {
+            Craft::$app->getSession()->setError(Craft::t('app', "Couldn't save plugin settings."));
+            return false;
+        }
+        
+        return true;
+    }
 }
