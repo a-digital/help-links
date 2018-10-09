@@ -263,6 +263,10 @@ class HelpLinks extends Plugin
 	        $show = true;
 	    }
 	    if ($currentUser->can('helpLinks:settings')) {
+	        $subNavs['rename'] = [
+	            'label' => 'Rename Headings',
+	            'url' => 'help-links/rename',
+	        ];
 	        $subNavs['plugin'] = [
 	            'label' => 'Plugin Settings',
 	            'url' => 'help-links/plugin',
@@ -301,6 +305,8 @@ class HelpLinks extends Plugin
             ],
             'help-links/sections/<subSection:{handle}>' => 'help-links/cp',
 
+            'help-links/rename' => 'help-links/cp/rename',
+            
             'help-links/plugin' => 'help-links/cp/plugin',
             
             'help-links/export' => 'help-links/cp/export',
