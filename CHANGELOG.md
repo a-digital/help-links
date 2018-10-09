@@ -1,5 +1,13 @@
 # Help Links Changelog
 
+## 1.0.6 - 2018-10-09
+### Changed
+- Tidied up installation file
+- Updated some field instructions
+
+### Added
+- New section added to rename section headings without clearing their links. This is separate to the add/remove/reorder functionality
+
 ## 1.0.5 - 2018-10-08
 ### Changed
 - Updated instructional text
