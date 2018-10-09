@@ -129,6 +129,41 @@ class CpController extends Controller
      *
      * @return mixed
      */
+    public function actionRename()
+    {
+	    $variables = [];
+	    $variables['fullPageForm'] = true;
+	    $variables['selectedSubnavItem'] = 'rename';
+	    $variables['crumbs'] = [
+            [
+                'label' => "Help Links",
+                'url' => UrlHelper::cpUrl('help-links')
+            ]
+        ];
+        $variables['settings'] = HelpLinks::$plugin->getSettings();
+	    
+	    return $this->renderTemplate('help-links/rename', $variables);
+    }
+    
+    /**
+     * @return Response
+     * @throws \yii\web\BadRequestHttpException
+     * @throws \craft\errors\MissingComponentException
+     */
+    public function actionSaveRename()
+    {
+        $request = Craft::$app->getRequest();
+        HelpLinks::$plugin->helpLinksService->saveRename($request);
+        Craft::$app->getSession()->setNotice(Craft::t('help-links', 'Help Links headings renamed.'));
+        return $this->redirectToPostedUrl();
+    }
+    
+    /**
+     * Handle a request going to our plugin's index action URL,
+     * e.g.: actions/help-links/cp/plugin
+     *
+     * @return mixed
+     */
     public function actionPlugin()
     {
 	    $variables = [];
