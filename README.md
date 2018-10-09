@@ -22,7 +22,7 @@ To install the plugin, follow these instructions.
 
 ## Help Links Overview
 
-This widget can be used to display useful links on the dashboard for clients. You can create as many headings as you need in the plugin settings to separate out the content clearly. Each link can have a title, url, and additional comment. This plugin was inspired by the talk Katie Fritz gave at dot all 2018 in Berlin about [Prioritising Author Experience](http://dotall.com/sessions/prioritizing-author-experience).
+This widget can be used to display useful links on the dashboard for clients. You can create as many headings as you need in the plugin settings to separate out the content clearly. Each link can have a title, url, and additional comment. This plugin was inspired by the talk [Katie Fritz](https://twitter.com/KatieMaeFritz) gave at dot all 2018 in Berlin about [Prioritising Author Experience](http://dotall.com/sessions/prioritizing-author-experience).
 
 ## Configuring Help Links
 
@@ -84,5 +84,14 @@ HelpLinks::$plugin->helpLinksService->generateSection($request);
 ## Using Help Links
 
 Once configured, add the widget to your dashboard.
+
+## Screenshots
+
+![Dashboard](resources/img/dashboard.png)
+![Settings](resources/img/settings.png)
+![Section Links](resources/img/section-links.png)
+![Rename Headings](resources/img/rename.png)
+![Import / Export](resources/img/import-export.png)
+![Permissions](resources/img/permissions.png)
 
 Brought to you by [A Digital](https://adigital.agency)

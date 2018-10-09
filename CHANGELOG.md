@@ -1,5 +1,9 @@
 # Help Links Changelog
 
+## 1.0.7 - 2018-10-09
+### Changed
+- Added screenshots to readme file
+
 ## 1.0.6 - 2018-10-09
 ### Changed
 - Tidied up installation file
