@@ -1,5 +1,9 @@
 # Help Links Changelog
 
+## 1.0.8 - 2020-11-03
+### Changed
+- Composer 2 compatibility - Asset bundle PSR-4 autoloading standard
+
 ## 1.0.7 - 2018-10-09
 ### Changed
 - Added screenshots to readme file
