@@ -43,7 +43,7 @@ class HelpLinksAsset extends AssetBundle
     public function init()
     {
         // define the path that your publishable resources live
-        $this->sourcePath = "@adigital/helplinks/assetbundles/helplinks/dist";
+        $this->sourcePath = "@adigital/helplinks/assetbundles/HelpLinks/dist";
 
         // define the dependencies
         $this->depends = [
