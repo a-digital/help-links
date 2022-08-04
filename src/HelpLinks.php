@@ -219,7 +219,11 @@ class HelpLinks extends Plugin
                     __METHOD__
                 );
                 // Register our custom permissions
-                $event->permissions[Craft::t('help-links', 'Help Links')] = $this->customAdminCpPermissions();
+
+                $event->permissions[] = [
+                    'heading' => Craft::t('help-links', 'Help Links'),
+                    'permissions' => $this->customAdminCpPermissions()
+                ];
             }
         );
     }
