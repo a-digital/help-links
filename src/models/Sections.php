@@ -10,9 +10,6 @@
 
 namespace adigital\helplinks\models;
 
-use adigital\helplinks\HelpLinks;
-
-use Craft;
 use craft\base\Model;
 
 /**
@@ -35,10 +32,16 @@ class Sections extends Model
     /**
      * Some model attribute
      *
+     * @var array
+     */
+    public array $links = [['', '', '']];
+
+    /**
+     * Some model attribute
+     *
      * @var string
      */
-    public $links = [['', '', '']];
-    public $position = '0';
+    public string $position = '0';
 
     // Public Methods
     // =========================================================================
@@ -53,7 +56,7 @@ class Sections extends Model
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             ['links', 'default', 'value' => [['', '', '']]],

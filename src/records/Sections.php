@@ -10,9 +10,6 @@
 
 namespace adigital\helplinks\records;
 
-use adigital\helplinks\HelpLinks;
-
-use Craft;
 use craft\db\ActiveRecord;
 
 /**
@@ -48,7 +45,7 @@ class Sections extends ActiveRecord
      *
      * @return string the table name
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%helplinks_sections}}';
     }

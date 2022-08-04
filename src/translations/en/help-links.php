@@ -22,4 +22,13 @@
  */
 return [
     'Help Links plugin loaded' => 'Help Links plugin loaded',
+    'Help Links headings renamed.' => 'Help Links headings renamed.',
+    'Import / Export the settings and links' => 'Import / Export the settings and links',
+    'Help Links' => 'Help Links',
+    ' Links' => ' Links',
+    'Sections' => 'Sections',
+    '{name} plugin loaded' => '{name} plugin loaded',
+    'Manage the widgets links under each heading' => 'Manage the widgets links under each heading',
+    'Manage the headings available to the widget' => 'Manage the headings available to the widget',
+    'Help Links section saved.' => 'Help Links section saved.'
 ];

@@ -15,8 +15,10 @@ use adigital\helplinks\records\Sections as SectionsRecord;
 
 use Craft;
 use craft\base\Component;
-use craft\mail\Message;
-use craft\web\View;
+use craft\errors\MissingComponentException;
+use JsonException;
+use yii\db\StaleObjectException;
+use yii\web\NotFoundHttpException;
 
 /**
  * HelpLinksService Service
@@ -44,19 +46,21 @@ class HelpLinksService extends Component
      *
      *     HelpLinks::$plugin->helpLinksService->returnSection()
      *
-     * @return mixed
+     * @param $section
+     * @return array|false
+     * @throws JsonException
      */
-    public function returnSection($section)
+    public function returnSection($section): bool|array
     {
         $model = SectionsRecord::findOne(["heading" => $section]);
         if ($model === null) {
         	return false;
         }
         $attributes = $model->getAttributes();
-        $attributes["links"] = json_decode($attributes["links"]);
+        $attributes["links"] = json_decode($attributes["links"], true, 512, JSON_THROW_ON_ERROR);
         return $attributes;
     }
-    
+
     /**
      * This function can literally be anything you want, and you can have as many service
      * functions as you want
@@ -65,9 +69,11 @@ class HelpLinksService extends Component
      *
      *     HelpLinks::$plugin->helpLinksService->createSection()
      *
-     * @return mixed
+     * @param $section
+     * @param $count
+     * @return SectionsRecord
      */
-    public function createSection($section, $count)
+    public function createSection($section, $count): SectionsRecord
     {
         $modelSection = [
 	        "links" => "[['', '', '']]",
@@ -87,7 +93,7 @@ class HelpLinksService extends Component
         $model->save();
         return $model;
     }
-    
+
     /**
      * This function can literally be anything you want, and you can have as many service
      * functions as you want
@@ -96,9 +102,10 @@ class HelpLinksService extends Component
      *
      *     HelpLinks::$plugin->helpLinksService->saveSection()
      *
-     * @return mixed
+     * @param $request
+     * @return SectionsRecord|null
      */
-    public function saveSection($request)
+    public function saveSection($request): ?SectionsRecord
     {
 	    $modelSection = [
 	        "links" => array_merge($request->getParam("links"))
@@ -113,7 +120,7 @@ class HelpLinksService extends Component
         $model->save();
         return $model;
     }
-    
+
     /**
      * This function can literally be anything you want, and you can have as many service
      * functions as you want
@@ -122,9 +129,12 @@ class HelpLinksService extends Component
      *
      *     HelpLinks::$plugin->helpLinksService->importSection()
      *
-     * @return mixed
+     * @param string $title
+     * @param array $links
+     * @param int $count
+     * @return SectionsRecord|null
      */
-    public function importSection($title, $links = [], $count)
+    public function importSection(string $title, int $count, array $links = []): ?SectionsRecord
     {
         $modelSection = [
 	        "links" => $links,
@@ -140,7 +150,7 @@ class HelpLinksService extends Component
         $model->save();
         return $model;
     }
-    
+
     /**
      * This function can literally be anything you want, and you can have as many service
      * functions as you want
@@ -149,9 +159,10 @@ class HelpLinksService extends Component
      *
      *     HelpLinks::$plugin->helpLinksService->generateSection()
      *
-     * @return mixed
+     * @param $request
+     * @return SectionsRecord|null
      */
-    public function generateSection($request)
+    public function generateSection($request): ?SectionsRecord
     {
         $modelSection = [
 	        "links" => $request["links"]
@@ -166,7 +177,7 @@ class HelpLinksService extends Component
         $model->save();
         return $model;
     }
-    
+
     /**
      * This function can literally be anything you want, and you can have as many service
      * functions as you want
@@ -175,33 +186,39 @@ class HelpLinksService extends Component
      *
      *     HelpLinks::$plugin->helpLinksService->importSettings()
      *
-     * @return mixed
+     * @param $attachments
+     * @return bool
+     * @throws JsonException
+     * @throws StaleObjectException
      */
-    public function importSettings($attachments)
+    public function importSettings($attachments): bool
     {
 	    $file = $attachments["jsonSettings"]["tmp_name"];
 	    
-	    $filedata = file_get_contents($file);
-	    $jsonSettings = json_decode($filedata);
+	    $fileData = file_get_contents($file);
+	    $jsonSettings = json_decode($fileData, false, 512, JSON_THROW_ON_ERROR);
 	    
 	    $pluginSettings = (array)$jsonSettings->plugin;
 	    $sectionSettings = $jsonSettings->sections;
 	    
 	    $plugin = Craft::$app->getPlugins()->getPlugin("help-links");
+        if (!$plugin) {
+            return false;
+        }
 	    Craft::$app->getPlugins()->savePluginSettings($plugin, $pluginSettings);
 	    $sections = [];
 	    $count = 1;
 	    foreach($sectionSettings as $key => $section) {
-	        HelpLinks::$plugin->helpLinksService->importSection($key, $section, $count);
+	        $this->importSection($key, $count, $section);
 	        $sections[] = $key;
 	        $count++;
         }
         
-        HelpLinks::$plugin->helpLinksService->removeSections($sections);
+        $this->removeSections($sections);
 	    
 		return true;
     }
-    
+
     /**
      * This function can literally be anything you want, and you can have as many service
      * functions as you want
@@ -210,24 +227,24 @@ class HelpLinksService extends Component
      *
      *     HelpLinks::$plugin->helpLinksService->removeSections()
      *
-     * @return mixed
+     * @param $sectionTitles
+     * @return bool
+     * @throws StaleObjectException
      */
-    public function removeSections($sectionTitles)
+    public function removeSections($sectionTitles): bool
     {
 	    $models = SectionsRecord::find()->where([
 	    	'not in',
 	    	'heading',
 	    	$sectionTitles
 	    ])->all();
-	    if (isset($models) && (is_array($models) || is_object($models)) && ($models instanceof \Countable || count($models) > 0)) {
-		    foreach($models as $model) {
-			    $model->delete();
-		    }
-	    }
+        foreach($models as $model) {
+            $model->delete();
+        }
 	    return true;
 	}
-	
-	/**
+
+    /**
      * This function can literally be anything you want, and you can have as many service
      * functions as you want
      *
@@ -235,19 +252,25 @@ class HelpLinksService extends Component
      *
      *     HelpLinks::$plugin->helpLinksService->saveRename()
      *
-     * @return mixed
+     * @param $request
+     * @return bool
+     * @throws MissingComponentException
+     * @throws NotFoundHttpException
      */
-    public function saveRename($request)
+    public function saveRename($request): bool
     {
 	    $sections = $request->getParam("section");
 	    $pluginSections = [];
 	    foreach($sections as $old => $new) {
+            $pluginSections[] = [$new];
 		    if ($old !== $new) {
 			    $model = SectionsRecord::findOne(['heading' => $old]);
+                if (!$model) {
+                    continue;
+                }
 			    $model->setAttribute("heading", $new);
 			    $model->save();
 		    }
-		    $pluginSections[] = [$new];
 	    }
 	    
         $pluginModel = Craft::$app->getPlugins()->getPlugin("help-links");

@@ -13,8 +13,14 @@ namespace adigital\helplinks\controllers;
 use adigital\helplinks\HelpLinks;
 
 use Craft;
+use craft\errors\MissingComponentException;
 use craft\web\Controller;
 use craft\helpers\UrlHelper;
+use JsonException;
+use yii\db\StaleObjectException;
+use yii\web\BadRequestHttpException;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * Cp Controller
@@ -47,7 +53,7 @@ class CpController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = [];
+    protected int|bool|array $allowAnonymous = [];
 
     // Public Methods
     // =========================================================================
@@ -56,9 +62,11 @@ class CpController extends Controller
      * Handle a request going to our plugin's index action URL,
      * e.g.: actions/help-links/cp
      *
-     * @return mixed
+     * @param string $subSection
+     * @return Response
+     * @throws JsonException
      */
-    public function actionIndex(string $subSection = 'overview', string $siteHandle = null)
+    public function actionIndex(string $subSection = 'overview'): Response
     {
         $variables = [];
 
@@ -89,7 +97,6 @@ class CpController extends Controller
                 'url' => UrlHelper::cpUrl('help-links/sections'),
             ]
         ];
-        $variables['selectedSubnavItem'] = 'sections';
         $variables['currentSubSection'] = $subSection;
 
         // Enabled sites
@@ -97,9 +104,7 @@ class CpController extends Controller
 
         // Render the template
         $template = 'help-links/sections/index';
-        if ($subSection == "overview") {
-	        $template = 'help-links/sections/index';
-        } else {
+        if ($subSection != "overview") {
 	        $variables['fullPageForm'] = true;
 	        $sectionSettings = HelpLinks::$plugin->helpLinksService->returnSection($variables['selectedItem']);
 	        if ($sectionSettings !== false) {
@@ -112,24 +117,24 @@ class CpController extends Controller
 
     /**
      * @return Response
-     * @throws \yii\web\BadRequestHttpException
-     * @throws \craft\errors\MissingComponentException
+     * @throws MissingComponentException
+     * @throws BadRequestHttpException
      */
-    public function actionSaveSections()
+    public function actionSaveSections(): Response
     {
         $request = Craft::$app->getRequest();
         HelpLinks::$plugin->helpLinksService->saveSection($request);
         Craft::$app->getSession()->setNotice(Craft::t('help-links', 'Help Links section saved.'));
         return $this->redirectToPostedUrl();
     }
-    
+
     /**
      * Handle a request going to our plugin's index action URL,
      * e.g.: actions/help-links/cp/plugin
      *
-     * @return mixed
+     * @return Response
      */
-    public function actionRename()
+    public function actionRename(): Response
     {
 	    $variables = [];
 	    $variables['fullPageForm'] = true;
@@ -144,27 +149,28 @@ class CpController extends Controller
 	    
 	    return $this->renderTemplate('help-links/rename', $variables);
     }
-    
+
     /**
      * @return Response
-     * @throws \yii\web\BadRequestHttpException
-     * @throws \craft\errors\MissingComponentException
+     * @throws BadRequestHttpException
+     * @throws MissingComponentException
+     * @throws NotFoundHttpException
      */
-    public function actionSaveRename()
+    public function actionSaveRename(): Response
     {
         $request = Craft::$app->getRequest();
         HelpLinks::$plugin->helpLinksService->saveRename($request);
         Craft::$app->getSession()->setNotice(Craft::t('help-links', 'Help Links headings renamed.'));
         return $this->redirectToPostedUrl();
     }
-    
+
     /**
      * Handle a request going to our plugin's index action URL,
      * e.g.: actions/help-links/cp/plugin
      *
-     * @return mixed
+     * @return Response
      */
-    public function actionPlugin()
+    public function actionPlugin(): Response
     {
 	    $variables = [];
 	    $variables['selectedSubnavItem'] = 'plugin';
@@ -178,16 +184,17 @@ class CpController extends Controller
 	    
 	    return $this->renderTemplate('help-links/settings', $variables);
     }
-    
+
     /**
      * Saves a plugin’s settings.
      *
      * @return Response|null
-     * @throws NotFoundHttpException if the requested plugin cannot be found
-     * @throws \yii\web\BadRequestHttpException
-     * @throws \craft\errors\MissingComponentException
+     * @throws BadRequestHttpException
+     * @throws MissingComponentException
+     * @throws NotFoundHttpException
+     * @throws StaleObjectException
      */
-    public function actionSavePluginSettings()
+    public function actionSavePluginSettings(): ?Response
     {
         $this->requirePostRequest();
         $pluginHandle = Craft::$app->getRequest()->getRequiredBodyParam('pluginHandle');
@@ -222,16 +229,14 @@ class CpController extends Controller
         Craft::$app->getSession()->setNotice(Craft::t('app', 'Plugin settings saved.'));
         return $this->redirectToPostedUrl();
     }
-    
+
     /**
      * Exports a plugin’s settings.
      *
-     * @return Response|null
-     * @throws NotFoundHttpException if the requested plugin cannot be found
-     * @throws \yii\web\BadRequestHttpException
-     * @throws \craft\errors\MissingComponentException
+     * @return false|string
+     * @throws JsonException
      */
-    public function actionExport()
+    public function actionExport(): bool|string
     {
         $pluginSettings = HelpLinks::$plugin->getSettings();
         $settings = [];
@@ -241,21 +246,18 @@ class CpController extends Controller
 	        $settings["plugin"]["sections"][] = [$sectionSettings["heading"]];
 	        $settings["sections"][$sectionSettings["heading"]] = $sectionSettings["links"];
         }
-        $json = json_encode($settings);
+        $json = json_encode($settings, JSON_THROW_ON_ERROR);
         header('Content-disposition: attachment; filename=helplinks_settings.json');
 		header('Content-type: application/json');
         return $json;
     }
-    
+
     /**
      * Imports a plugin’s settings.
      *
-     * @return Response|null
-     * @throws NotFoundHttpException if the requested plugin cannot be found
-     * @throws \yii\web\BadRequestHttpException
-     * @throws \craft\errors\MissingComponentException
+     * @return Response
      */
-    public function actionImport()
+    public function actionImport(): Response
     {
         $variables = [];
 	    $variables['selectedSubnavItem'] = 'import';
@@ -269,19 +271,19 @@ class CpController extends Controller
 	    
 	    return $this->renderTemplate('help-links/import', $variables);
     }
-    
+
     /**
      * Processes a JSON file to import a plugin’s settings.
      *
-     * @return Response|null
-     * @throws NotFoundHttpException if the requested plugin cannot be found
-     * @throws \yii\web\BadRequestHttpException
-     * @throws \craft\errors\MissingComponentException
+     * @return Response
+     * @throws BadRequestHttpException
+     * @throws JsonException
+     * @throws MissingComponentException
+     * @throws StaleObjectException
      */
-    public function actionProcessImport()
+    public function actionProcessImport(): Response
     {
 	    $this->requirePostRequest();
-	    $request = Craft::$app->getRequest();
 	    if (count($_FILES)) {
 		    HelpLinks::$plugin->helpLinksService->importSettings($_FILES);
 	    }

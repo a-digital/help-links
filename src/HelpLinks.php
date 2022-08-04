@@ -11,11 +11,13 @@
 namespace adigital\helplinks;
 
 use adigital\helplinks\models\Settings;
+use adigital\helplinks\services\HelpLinksService;
 use adigital\helplinks\widgets\HelpLinksWidget as HelpLinksWidgetWidget;
-use adigital\helplinks\services\HelpLinksService as HelpLinksServiceService;
 
 use Craft;
+use craft\base\Model;
 use craft\base\Plugin;
+use craft\elements\User;
 use craft\services\Plugins;
 use craft\services\Dashboard;
 use craft\services\UserPermissions;
@@ -25,7 +27,12 @@ use craft\events\RegisterUserPermissionsEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\web\UrlManager;
 
+use Throwable;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 use yii\base\Event;
+use yii\base\Exception;
 
 /**
  * Craft plugins are very much like little applications in and of themselves. We’ve made
@@ -41,6 +48,8 @@ use yii\base\Event;
  * @package   HelpLinks
  * @since     1.0.0
  *
+ * @property-read null|array $cpNavItem
+ * @property  HelpLinksService $helpLinksService
  * @property  Settings $settings
  * @method    Settings getSettings()
  */
@@ -55,7 +64,7 @@ class HelpLinks extends Plugin
      *
      * @var HelpLinks
      */
-    public static $plugin;
+    public static HelpLinks $plugin;
 
     // Public Properties
     // =========================================================================
@@ -65,7 +74,7 @@ class HelpLinks extends Plugin
      *
      * @var string
      */
-    public $schemaVersion = '1.0.0';
+    public string $schemaVersion = '1.0.0';
 
     // Public Methods
     // =========================================================================
@@ -81,7 +90,7 @@ class HelpLinks extends Plugin
      * you do not need to load it in your init() method.
      *
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
         self::$plugin = $this;
@@ -120,7 +129,7 @@ class HelpLinks extends Plugin
     /**
      * Install our event listeners.
      */
-    protected function installEventListeners()
+    protected function installEventListeners(): void
     {
         $request = Craft::$app->getRequest();
         // Add in our event listeners that are needed for every request
@@ -138,13 +147,13 @@ class HelpLinks extends Plugin
     /**
      * Install global event listeners for all request types
      */
-    protected function installGlobalEventListeners()
+    protected function installGlobalEventListeners(): void
     {
 	    // Register our widgets
         Event::on(
             Dashboard::class,
             Dashboard::EVENT_REGISTER_WIDGET_TYPES,
-            function (RegisterComponentTypesEvent $event) {
+            static function (RegisterComponentTypesEvent $event) {
                 $event->types[] = HelpLinksWidgetWidget::class;
             }
         );
@@ -164,12 +173,12 @@ class HelpLinks extends Plugin
     /**
      * Install site event listeners for site requests only
      */
-    protected function installSiteEventListeners()
+    protected function installSiteEventListeners(): void
     {
         Event::on(
             UrlManager::class,
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
+            static function (RegisterUrlRulesEvent $event) {
                 Craft::debug(
                     'UrlManager::EVENT_REGISTER_SITE_URL_RULES',
                     __METHOD__
@@ -182,7 +191,7 @@ class HelpLinks extends Plugin
     /**
      * Install site event listeners for AdminCP requests only
      */
-    protected function installCpEventListeners()
+    protected function installCpEventListeners(): void
     {
         // Handler: UrlManager::EVENT_REGISTER_CP_URL_RULES
         Event::on(
@@ -221,9 +230,9 @@ class HelpLinks extends Plugin
     /**
      * Creates and returns the model used to store the plugin’s settings.
      *
-     * @return \craft\base\Model|null
+     * @return Model|null
      */
-    protected function createSettingsModel()
+    protected function createSettingsModel(): ?Model
     {
         return new Settings();
     }
@@ -232,7 +241,11 @@ class HelpLinks extends Plugin
      * Returns the rendered settings HTML, which will be inserted into the content
      * block on the settings page.
      *
-     * @return string The rendered settings HTML
+     * @return string
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws Exception
      */
     protected function settingsHtml(): string
     {
@@ -243,11 +256,13 @@ class HelpLinks extends Plugin
             ]
         );
     }
-    
+
     /**
      * @inheritdoc
+     * @throws Throwable
+     * @return array|null
      */
-    public function getCpNavItem()
+    public function getCpNavItem(): array|null
     {
         $subNavs = [];
         $show = false;
@@ -316,7 +331,7 @@ class HelpLinks extends Plugin
             'help-links/import/process' => 'help-links/cp/processImport'
         ];
     }
-    
+
     /**
      * Returns the custom AdminCP user permissions.
      *
@@ -324,13 +339,6 @@ class HelpLinks extends Plugin
      */
     protected function customAdminCpPermissions(): array
     {
-        // The script meta containers for the global meta bundle
-        try {
-            $currentSiteId = Craft::$app->getSites()->getCurrentSite()->id ?? 1;
-        } catch (SiteNotFoundException $e) {
-            $currentSiteId = 1;
-        }
-
         return [
             'helpLinks:sections' => [
                 'label' => Craft::t('help-links', 'Manage the widgets links under each heading'),

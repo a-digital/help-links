@@ -11,10 +11,14 @@
 namespace adigital\helplinks\widgets;
 
 use adigital\helplinks\HelpLinks;
-use adigital\helplinks\assetbundles\helplinkswidgetwidget\HelpLinksWidgetWidgetAsset;
 
 use Craft;
 use craft\base\Widget;
+use JsonException;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+use yii\base\Exception;
 
 /**
  * Help Links Widget
@@ -27,6 +31,8 @@ use craft\base\Widget;
  * @author    A Digital
  * @package   HelpLinks
  * @since     1.0.0
+ *
+ * @property-read string|false $bodyHtml
  */
 class HelpLinksWidget extends Widget
 {
@@ -57,19 +63,9 @@ class HelpLinksWidget extends Widget
      *
      * @return string|null The path to the widget’s SVG icon
      */
-    public static function iconPath()
+    public static function iconPath(): ?string
     {
         return Craft::getAlias("@adigital/helplinks/assetbundles/helplinkswidgetwidget/dist/img/HelpLinksWidget-icon.svg");
-    }
-
-    /**
-     * Returns the widget’s maximum colspan.
-     *
-     * @return int|null The widget’s maximum colspan, if it has one
-     */
-    public static function maxColspan()
-    {
-        return null;
     }
 
     // Public Methods
@@ -78,11 +74,14 @@ class HelpLinksWidget extends Widget
     /**
      * Returns the widget's body HTML.
      *
-     * @return string|false The widget’s body HTML, or `false` if the widget
-     *                      should not be visible. (If you don’t want the widget
-     *                      to be selectable in the first place, use {@link isSelectable()}.)
+     * @return null|string
+     * @throws JsonException
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws Exception
      */
-    public function getBodyHtml()
+    public function getBodyHtml(): ?string
     {
         $settings = HelpLinks::$plugin->getSettings();
         $sections = [];

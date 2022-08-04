@@ -10,9 +10,6 @@
 
 namespace adigital\helplinks\models;
 
-use adigital\helplinks\HelpLinks;
-
-use Craft;
 use craft\base\Model;
 
 /**
@@ -39,8 +36,14 @@ class Settings extends Model
      *
      * @var string
      */
-    public $widgetTitle = '';
-    public $sections = [['']];
+    public string $widgetTitle = '';
+
+    /**
+     * Some field model attribute
+     *
+     * @var array
+     */
+    public array $sections = [['']];
 
     // Public Methods
     // =========================================================================
@@ -55,7 +58,7 @@ class Settings extends Model
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             ['widgetTitle', 'string'],
