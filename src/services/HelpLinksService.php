@@ -57,7 +57,11 @@ class HelpLinksService extends Component
         	return false;
         }
         $attributes = $model->getAttributes();
-        $attributes["links"] = json_decode($attributes["links"], true, 512, JSON_THROW_ON_ERROR);
+        if ($attributes["links"] <> '') {
+            $attributes["links"] = json_decode($attributes["links"], true, 512, JSON_THROW_ON_ERROR);
+        } else {
+            $attributes["links"] = [];
+        }
         return $attributes;
     }
 

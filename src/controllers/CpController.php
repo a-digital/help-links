@@ -49,7 +49,7 @@ class CpController extends Controller
     // =========================================================================
 
     /**
-     * @var    bool|array Allows anonymous access to this controller's actions.
+     * @var    int|bool|array Allows anonymous access to this controller's actions.
      *         The actions must be in 'kebab-case'
      * @access protected
      */
