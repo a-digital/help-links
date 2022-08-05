@@ -54,7 +54,7 @@ class HelpLinksService extends Component
     {
         $model = SectionsRecord::findOne(["heading" => $section]);
         if ($model === null) {
-        	return false;
+            return false;
         }
         $attributes = $model->getAttributes();
         if ($attributes["links"] <> '') {
@@ -76,24 +76,25 @@ class HelpLinksService extends Component
      * @param $section
      * @param $count
      * @return SectionsRecord
+     * @throws JsonException
      */
     public function createSection($section, $count): SectionsRecord
     {
         $modelSection = [
-	        "links" => "[['', '', '']]",
-	        "position" => $count
+            "links" => json_encode("[['', '', '']]", JSON_THROW_ON_ERROR),
+            "position" => $count
         ];
-        
+
         $model = SectionsRecord::findOne(['heading' => $section]);
         if ($model !== null) {
-	        $model->setAttribute("position", $count);
-	        $model->save();
-	        return $model;
-	    }
-	    
-    	$model = new SectionsRecord();
-    	$modelSection["heading"] = $section;
-    	$model->setAttributes($modelSection, false);
+            $model->setAttribute("position", $count);
+            $model->save();
+            return $model;
+        }
+
+        $model = new SectionsRecord();
+        $modelSection["heading"] = $section;
+        $model->setAttributes($modelSection, false);
         $model->save();
         return $model;
     }
@@ -108,18 +109,19 @@ class HelpLinksService extends Component
      *
      * @param $request
      * @return SectionsRecord|null
+     * @throws JsonException
      */
     public function saveSection($request): ?SectionsRecord
     {
-	    $modelSection = [
-	        "links" => array_merge($request->getParam("links"))
+        $modelSection = [
+            "links" => json_encode($request->getParam("links"), JSON_THROW_ON_ERROR)
         ];
-        
+
         $model = SectionsRecord::findOne(['heading' => $request->getParam("heading")]);
         if ($model === null) {
-	    	$model = new SectionsRecord();
-	    	$modelSection["heading"] = $request->getParam("heading");
-	    }
+            $model = new SectionsRecord();
+            $modelSection["heading"] = $request->getParam("heading");
+        }
         $model->setAttributes($modelSection, false);
         $model->save();
         return $model;
@@ -137,19 +139,20 @@ class HelpLinksService extends Component
      * @param array $links
      * @param int $count
      * @return SectionsRecord|null
+     * @throws JsonException
      */
     public function importSection(string $title, int $count, array $links = []): ?SectionsRecord
     {
         $modelSection = [
-	        "links" => $links,
-	        "position" => $count
+            "links" => json_encode($links, JSON_THROW_ON_ERROR),
+            "position" => $count
         ];
-        
+
         $model = SectionsRecord::findOne(['heading' => $title]);
         if ($model === null) {
-	    	$model = new SectionsRecord();
-	    	$modelSection["heading"] = $title;
-	    }
+            $model = new SectionsRecord();
+            $modelSection["heading"] = $title;
+        }
         $model->setAttributes($modelSection, false);
         $model->save();
         return $model;
@@ -165,18 +168,19 @@ class HelpLinksService extends Component
      *
      * @param $request
      * @return SectionsRecord|null
+     * @throws JsonException
      */
     public function generateSection($request): ?SectionsRecord
     {
         $modelSection = [
-	        "links" => $request["links"]
+            "links" => json_encode($request["links"], JSON_THROW_ON_ERROR)
         ];
-        
+
         $model = SectionsRecord::findOne(['heading' => $request["heading"]]);
         if ($model === null) {
-	    	$model = new SectionsRecord();
-	    	$modelSection["heading"] = $request["heading"];
-	    }
+            $model = new SectionsRecord();
+            $modelSection["heading"] = $request["heading"];
+        }
         $model->setAttributes($modelSection, false);
         $model->save();
         return $model;
@@ -197,30 +201,30 @@ class HelpLinksService extends Component
      */
     public function importSettings($attachments): bool
     {
-	    $file = $attachments["jsonSettings"]["tmp_name"];
-	    
-	    $fileData = file_get_contents($file);
-	    $jsonSettings = json_decode($fileData, false, 512, JSON_THROW_ON_ERROR);
-	    
-	    $pluginSettings = (array)$jsonSettings->plugin;
-	    $sectionSettings = $jsonSettings->sections;
-	    
-	    $plugin = Craft::$app->getPlugins()->getPlugin("help-links");
+        $file = $attachments["jsonSettings"]["tmp_name"];
+
+        $fileData = file_get_contents($file);
+        $jsonSettings = json_decode($fileData, false, 512, JSON_THROW_ON_ERROR);
+
+        $pluginSettings = (array)$jsonSettings->plugin;
+        $sectionSettings = $jsonSettings->sections;
+
+        $plugin = Craft::$app->getPlugins()->getPlugin("help-links");
         if (!$plugin) {
             return false;
         }
-	    Craft::$app->getPlugins()->savePluginSettings($plugin, $pluginSettings);
-	    $sections = [];
-	    $count = 1;
-	    foreach($sectionSettings as $key => $section) {
-	        $this->importSection($key, $count, $section);
-	        $sections[] = $key;
-	        $count++;
+        Craft::$app->getPlugins()->savePluginSettings($plugin, $pluginSettings);
+        $sections = [];
+        $count = 1;
+        foreach($sectionSettings as $key => $section) {
+            $this->importSection($key, $count, $section);
+            $sections[] = $key;
+            $count++;
         }
-        
+
         $this->removeSections($sections);
-	    
-		return true;
+
+        return true;
     }
 
     /**
@@ -237,16 +241,16 @@ class HelpLinksService extends Component
      */
     public function removeSections($sectionTitles): bool
     {
-	    $models = SectionsRecord::find()->where([
-	    	'not in',
-	    	'heading',
-	    	$sectionTitles
-	    ])->all();
+        $models = SectionsRecord::find()->where([
+            'not in',
+            'heading',
+            $sectionTitles
+        ])->all();
         foreach($models as $model) {
             $model->delete();
         }
-	    return true;
-	}
+        return true;
+    }
 
     /**
      * This function can literally be anything you want, and you can have as many service
@@ -263,26 +267,26 @@ class HelpLinksService extends Component
      */
     public function saveRename($request): bool
     {
-	    $sections = $request->getParam("section");
-	    $pluginSections = [];
-	    foreach($sections as $old => $new) {
+        $sections = $request->getParam("section");
+        $pluginSections = [];
+        foreach($sections as $old => $new) {
             $pluginSections[] = [$new];
-		    if ($old !== $new) {
-			    $model = SectionsRecord::findOne(['heading' => $old]);
+            if ($old !== $new) {
+                $model = SectionsRecord::findOne(['heading' => $old]);
                 if (!$model) {
                     continue;
                 }
-			    $model->setAttribute("heading", $new);
-			    $model->save();
-		    }
-	    }
-	    
+                $model->setAttribute("heading", $new);
+                $model->save();
+            }
+        }
+
         $pluginModel = Craft::$app->getPlugins()->getPlugin("help-links");
 
         if ($pluginModel === null) {
             throw new NotFoundHttpException('Plugin not found');
         }
-        
+
         $settings = HelpLinks::$plugin->getSettings();
         $settings["sections"] = $pluginSections;
 
@@ -290,7 +294,7 @@ class HelpLinksService extends Component
             Craft::$app->getSession()->setError(Craft::t('app', "Couldn't save plugin settings."));
             return false;
         }
-        
+
         return true;
     }
 }
