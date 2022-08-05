@@ -1,5 +1,9 @@
 # Help Links Changelog
 
+## 2.0.0 - 2022-08-05
+### Added
+- Craft 4 version released
+
 ## 1.0.9 - 2020-11-04
 ### Fixed
 - Asset bundle sourcePath not correctly defined
