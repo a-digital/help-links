@@ -12,6 +12,7 @@ namespace adigital\helplinks\controllers;
 
 use adigital\helplinks\HelpLinks;
 
+use adigital\helplinks\records\Preferences;
 use Craft;
 use craft\errors\MissingComponentException;
 use craft\web\Controller;
@@ -78,8 +79,12 @@ class CpController extends Controller
         $variables['title'] = $templateTitle;
         $variables['selectedSubnavItem'] = 'sections';
         $variables['subSectionTitle'] = $subSectionTitle;
-        $variables['settings'] = HelpLinks::$plugin->getSettings();
-        $variables['sections'] = $variables['settings']['sections'];
+        $model = Preferences::find()->one();
+        if (!$model) {
+            $model = new Preferences();
+        }
+        $variables['settings'] = $model;
+        $variables['sections'] = $variables['settings']->getAttribute("sections");
         foreach ($variables['sections'] as $location) {
 			$friendlyUrl = strtolower(str_replace([" ", "-"], ["", ""], $location[0]));
 			if ($friendlyUrl === $subSection) {
@@ -145,7 +150,11 @@ class CpController extends Controller
                 'url' => UrlHelper::cpUrl('help-links')
             ]
         ];
-        $variables['settings'] = HelpLinks::$plugin->getSettings();
+        $model = Preferences::find()->one();
+        if (!$model) {
+            $model = new Preferences();
+        }
+        $variables['settings'] = $model;
 	    
 	    return $this->renderTemplate('help-links/rename', $variables);
     }
@@ -180,7 +189,11 @@ class CpController extends Controller
                 'url' => UrlHelper::cpUrl('help-links')
             ]
         ];
-        $variables['settings'] = HelpLinks::$plugin->getSettings();
+        $model = Preferences::find()->one();
+        if (!$model) {
+            $model = new Preferences();
+        }
+        $variables['settings'] = $model;
 	    
 	    return $this->renderTemplate('help-links/settings', $variables);
     }
@@ -197,29 +210,19 @@ class CpController extends Controller
     public function actionSavePluginSettings(): ?Response
     {
         $this->requirePostRequest();
-        $pluginHandle = Craft::$app->getRequest()->getRequiredBodyParam('pluginHandle');
-        $settings = Craft::$app->getRequest()->getBodyParam('settings', []);
-        $plugin = Craft::$app->getPlugins()->getPlugin($pluginHandle);
 
-        if ($plugin === null) {
-            throw new NotFoundHttpException('Plugin not found');
+        $model = Preferences::find()->one();
+        if (!$model) {
+            $model = new Preferences();
         }
 
-        if (!Craft::$app->getPlugins()->savePluginSettings($plugin, $settings)) {
-            Craft::$app->getSession()->setError(Craft::t('app', "Couldn't save plugin settings."));
+        $model->setAttribute('widgetTitle', Craft::$app->getRequest()->getParam('widgetTitle'));
+        $model->setAttribute('sections', Craft::$app->getRequest()->getParam('sections'));
+        $model->save();
 
-            // Send the plugin back to the template
-            Craft::$app->getUrlManager()->setRouteParams([
-                'plugin' => $plugin,
-            ]);
-
-            return null;
-        }
-        
         $sections = [];
-        $settings = HelpLinks::$plugin->getSettings();
         $count = 1;
-        foreach($settings["sections"] as $section) {
+        foreach($model->getAttribute('sections') as $section) {
 	        HelpLinks::$plugin->helpLinksService->createSection($section[0], $count);
 	        $sections[] = $section[0];
 	        $count++;
@@ -238,10 +241,14 @@ class CpController extends Controller
      */
     public function actionExport(): bool|string
     {
-        $pluginSettings = HelpLinks::$plugin->getSettings();
+        $model = Preferences::find()->one();
+
+        if (!$model) {
+            return false;
+        }
         $settings = [];
-        $settings["plugin"]["widgetTitle"] = $pluginSettings["widgetTitle"];
-        foreach($pluginSettings["sections"] as $section) {
+        $settings["plugin"]["widgetTitle"] = $model->getAttribute("widgetTitle");
+        foreach($model->getAttribute("sections") as $section) {
 	        $sectionSettings = HelpLinks::$plugin->helpLinksService->returnSection($section[0]);
 	        $settings["plugin"]["sections"][] = [$sectionSettings["heading"]];
 	        $settings["sections"][$sectionSettings["heading"]] = $sectionSettings["links"];
@@ -267,7 +274,11 @@ class CpController extends Controller
                 'url' => UrlHelper::cpUrl('help-links')
             ]
         ];
-        $variables['settings'] = HelpLinks::$plugin->getSettings();
+        $model = Preferences::find()->one();
+        if (!$model) {
+            $model = new Preferences();
+        }
+        $variables['settings'] = $model;
 	    
 	    return $this->renderTemplate('help-links/import', $variables);
     }

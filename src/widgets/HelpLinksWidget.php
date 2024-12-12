@@ -12,6 +12,7 @@ namespace adigital\helplinks\widgets;
 
 use adigital\helplinks\HelpLinks;
 
+use adigital\helplinks\records\Preferences;
 use Craft;
 use craft\base\Widget;
 use JsonException;
@@ -19,6 +20,7 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 use yii\base\Exception;
+use function Arrayy\array_first;
 
 /**
  * Help Links Widget
@@ -50,10 +52,14 @@ class HelpLinksWidget extends Widget
      */
     public static function displayName(): string
     {
-	    $settings = HelpLinks::$plugin->getSettings();
+        $model = Preferences::find()->one();
+        if (!$model) {
+            return '';
+        }
+	    $settings = $model;
 	    $widgetName = "Help Links";
-	    if ($settings["widgetTitle"]) {
-		    $widgetName = $settings["widgetTitle"];
+	    if ($settings->getAttribute("widgetTitle")) {
+		    $widgetName = $settings->getAttribute("widgetTitle");
 		}
         return Craft::t('help-links', $widgetName);
     }
@@ -83,11 +89,15 @@ class HelpLinksWidget extends Widget
      */
     public function getBodyHtml(): ?string
     {
-        $settings = HelpLinks::$plugin->getSettings();
+        $model = Preferences::find()->one();
+        if (!$model) {
+            return null;
+        }
+        $settings = $model;
         $sections = [];
-        if ($settings["sections"]) {
-	        foreach($settings["sections"] as $section) {
-		        $sectionSettings = HelpLinks::$plugin->helpLinksService->returnSection($section[0]);
+        if ($settings->getAttribute("sections")) {
+	        foreach($settings->getAttribute("sections") as $section) {
+		        $sectionSettings = HelpLinks::$plugin->helpLinksService->returnSection(array_first($section));
 		        $sections[] = $sectionSettings;
 	        }
         }

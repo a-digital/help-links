@@ -11,6 +11,7 @@
 namespace adigital\helplinks\services;
 
 use adigital\helplinks\HelpLinks;
+use adigital\helplinks\records\Preferences;
 use adigital\helplinks\records\Sections as SectionsRecord;
 
 use Craft;
@@ -203,6 +204,10 @@ class HelpLinksService extends Component
     {
         $file = $attachments["jsonSettings"]["tmp_name"];
 
+        if (!file_exists($file)) {
+            return false;
+        }
+
         $fileData = file_get_contents($file);
         $jsonSettings = json_decode($fileData, false, 512, JSON_THROW_ON_ERROR);
 
@@ -217,7 +222,7 @@ class HelpLinksService extends Component
         $sections = [];
         $count = 1;
         foreach($sectionSettings as $key => $section) {
-            $this->importSection($key, $count, $section);
+            $this->importSection($key, $count, (array) $section);
             $sections[] = $key;
             $count++;
         }
@@ -281,19 +286,13 @@ class HelpLinksService extends Component
             }
         }
 
-        $pluginModel = Craft::$app->getPlugins()->getPlugin("help-links");
-
-        if ($pluginModel === null) {
-            throw new NotFoundHttpException('Plugin not found');
-        }
-
-        $settings = HelpLinks::$plugin->getSettings();
-        $settings["sections"] = $pluginSections;
-
-        if (!Craft::$app->getPlugins()->savePluginSettings($pluginModel, (array)$settings)) {
-            Craft::$app->getSession()->setError(Craft::t('app', "Couldn't save plugin settings."));
+        $model = Preferences::find()->one();
+        if (!$model) {
             return false;
         }
+
+        $model->setAttribute("sections", $pluginSections);
+        $model->save();
 
         return true;
     }

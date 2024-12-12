@@ -10,7 +10,7 @@
 
 namespace adigital\helplinks;
 
-use adigital\helplinks\models\Settings;
+use adigital\helplinks\models\Preferences;
 use adigital\helplinks\services\HelpLinksService;
 use adigital\helplinks\widgets\HelpLinksWidget as HelpLinksWidgetWidget;
 
@@ -50,8 +50,6 @@ use yii\base\Exception;
  *
  * @property-read null|array $cpNavItem
  * @property  HelpLinksService $helpLinksService
- * @property  Settings $settings
- * @method    Settings getSettings()
  */
 class HelpLinks extends Plugin
 {
@@ -74,7 +72,7 @@ class HelpLinks extends Plugin
      *
      * @var string
      */
-    public string $schemaVersion = '1.0.0';
+    public string $schemaVersion = '2.0.0';
 
     // Public Methods
     // =========================================================================
@@ -232,36 +230,6 @@ class HelpLinks extends Plugin
     // =========================================================================
 
     /**
-     * Creates and returns the model used to store the plugin’s settings.
-     *
-     * @return Model|null
-     */
-    protected function createSettingsModel(): ?Model
-    {
-        return new Settings();
-    }
-
-    /**
-     * Returns the rendered settings HTML, which will be inserted into the content
-     * block on the settings page.
-     *
-     * @return string
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     * @throws Exception
-     */
-    protected function settingsHtml(): string
-    {
-        return Craft::$app->view->renderTemplate(
-            'help-links/settings/plugin',
-            [
-                'settings' => $this->getSettings()
-            ]
-        );
-    }
-
-    /**
      * @inheritdoc
      * @throws Throwable
      * @return array|null
@@ -281,13 +249,13 @@ class HelpLinks extends Plugin
 	        ];
 	        $show = true;
 	    }
-	    if ($currentUser->can('helpLinks:settings')) {
+	    if ($currentUser->can('helpLinks:preferences')) {
 	        $subNavs['rename'] = [
 	            'label' => 'Rename Headings',
 	            'url' => 'help-links/rename',
 	        ];
 	        $subNavs['plugin'] = [
-	            'label' => 'Plugin Settings',
+	            'label' => 'Plugin Preferences',
 	            'url' => 'help-links/plugin',
 	        ];
 	        $show = true;
@@ -347,7 +315,7 @@ class HelpLinks extends Plugin
             'helpLinks:sections' => [
                 'label' => Craft::t('help-links', 'Manage the widgets links under each heading'),
             ],
-            'helpLinks:settings' => [
+            'helpLinks:preferences' => [
                 'label' => Craft::t('help-links', 'Manage the headings available to the widget'),
             ],
             'helpLinks:importExport' => [

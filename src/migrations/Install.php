@@ -10,6 +10,7 @@
 
 namespace adigital\helplinks\migrations;
 
+use adigital\helplinks\records\Preferences;
 use Craft;
 use craft\db\Migration;
 
@@ -113,6 +114,26 @@ class Install extends Migration
             );
         }
 
+        // helplinks_preferences table
+        $tableSchema = Craft::$app->db->schema->getTableSchema(Preferences::tableName());
+        if ($tableSchema === null) {
+            $tablesCreated = true;
+            $this->createTable(
+                Preferences::tableName(),
+                [
+                    'id' => $this->primaryKey(),
+                    // Custom columns in the table
+                    'widgetTitle' => $this->string(255)->notNull()->defaultValue(''),
+                    'sections' => $this->text(),
+                    // Default columns
+                    'dateCreated' => $this->dateTime()->notNull(),
+                    'dateUpdated' => $this->dateTime()->notNull(),
+                    'uid' => $this->uid(),
+                ]
+            );
+        }
+
+
         return $tablesCreated;
     }
 
@@ -150,5 +171,6 @@ class Install extends Migration
     {
     // helplinks_sections table
         $this->dropTableIfExists('{{%helplinks_sections}}');
+        $this->dropTableIfExists(Preferences::tableName());
     }
 }

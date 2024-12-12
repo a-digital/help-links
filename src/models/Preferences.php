@@ -13,7 +13,7 @@ namespace adigital\helplinks\models;
 use craft\base\Model;
 
 /**
- * HelpLinks Settings Model
+ * HelpLinks Preferences Model
  *
  * This is a model used to define the plugin's settings.
  *
@@ -26,7 +26,7 @@ use craft\base\Model;
  * @package   HelpLinks
  * @since     1.0.0
  */
-class Settings extends Model
+class Preferences extends Model
 {
     // Public Properties
     // =========================================================================
