@@ -1,10 +1,10 @@
-# Help Links plugin for Craft CMS 3.x
+# Help Links plugin for Craft CMS 5.x
 
 Define useful links to be added to the dashboard for clients.
 
 ## Requirements
 
-This plugin requires Craft CMS 4.0.0 or later.
+This plugin requires Craft CMS 5.0.0 or later.
 
 ## Installation
 
@@ -22,7 +22,7 @@ To install the plugin, follow these instructions.
 
 ## Help Links Overview
 
-This widget can be used to display useful links on the dashboard for clients. You can create as many headings as you need in the plugin settings to separate out the content clearly. Each link can have a title, url, and additional comment. This plugin was inspired by the talk [Katie Fritz](https://twitter.com/KatieMaeFritz) gave at dot all 2018 in Berlin about [Prioritising Author Experience](http://dotall.com/sessions/prioritizing-author-experience).
+This widget can be used to display useful links on the dashboard for clients. You can create as many headings as you need in the plugin settings to separate out the content clearly. Each link can have a title, url, and additional comment. This plugin was inspired by the talk [Katie Fritz](https://x.com/KatieMaeFritz) gave at dot all 2018 in Berlin about [Prioritising Author Experience](https://craftcms.com/events/dot-all-2018/sessions/prioritizing-author-experience).
 
 ## Configuring Help Links
 
@@ -39,8 +39,6 @@ We've created an Import / Export page within the plugin which you can use. Once 
 ### Use a migration
 
 You can also create a content migration and run it within the CMS once the plugin is installed. You can then edit the settings in the usual way as needed.
-
-Further reading on content migrations in Craft 3 can be found here: [Using Content Migrations in Craft 3](https://adigital.agency/blog/using-content-migrations-in-craft-3).
 
 A code example can be found below for setting up a migration to run with this plugin, just make sure you add `use adigital\helplinks\HelpLinks;` to the top of the file.
 
