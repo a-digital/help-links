@@ -84,7 +84,7 @@ class CpController extends Controller
             $model = new Preferences();
         }
         $variables['settings'] = $model;
-        $variables['sections'] = $variables['settings']->getAttribute("sections");
+        $variables['sections'] = json_decode($variables['settings']->getAttribute("sections"), true);
         foreach ($variables['sections'] as $location) {
 			$friendlyUrl = strtolower(str_replace([" ", "-"], ["", ""], $location[0]));
 			if ($friendlyUrl === $subSection) {
@@ -216,13 +216,14 @@ class CpController extends Controller
             $model = new Preferences();
         }
 
-        $model->setAttribute('widgetTitle', Craft::$app->getRequest()->getParam('widgetTitle'));
-        $model->setAttribute('sections', Craft::$app->getRequest()->getParam('sections'));
+        $model->setAttribute('widgetTitle', Craft::$app->getRequest()->getParam('settings[widgetTitle]'));
+        $model->setAttribute('sections', Craft::$app->getRequest()->getParam('settings[sections]'));
         $model->save();
 
         $sections = [];
         $count = 1;
-        foreach($model->getAttribute('sections') as $section) {
+        $sectionsData = json_decode($model->getAttribute('sections'), true);
+        foreach($sectionsData as $section) {
 	        HelpLinks::$plugin->helpLinksService->createSection($section[0], $count);
 	        $sections[] = $section[0];
 	        $count++;
@@ -248,7 +249,8 @@ class CpController extends Controller
         }
         $settings = [];
         $settings["plugin"]["widgetTitle"] = $model->getAttribute("widgetTitle");
-        foreach($model->getAttribute("sections") as $section) {
+        $sectionsData = json_decode($model->getAttribute('sections'), true);
+        foreach($sectionsData as $section) {
 	        $sectionSettings = HelpLinks::$plugin->helpLinksService->returnSection($section[0]);
 	        $settings["plugin"]["sections"][] = [$sectionSettings["heading"]];
 	        $settings["sections"][$sectionSettings["heading"]] = $sectionSettings["links"];

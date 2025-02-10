@@ -95,8 +95,9 @@ class HelpLinksWidget extends Widget
         }
         $settings = $model;
         $sections = [];
-        if ($settings->getAttribute("sections")) {
-	        foreach($settings->getAttribute("sections") as $section) {
+        $sectionsData = json_decode($settings->getAttribute("sections"), true);
+        if ($sectionsData) {
+	        foreach($sectionsData as $section) {
 		        $sectionSettings = HelpLinks::$plugin->helpLinksService->returnSection(array_first($section));
 		        $sections[] = $sectionSettings;
 	        }
