@@ -36,7 +36,7 @@
     <input type="hidden" name="action" value="help-links/cp/save-rename">
     <input type="hidden" name="pluginHandle" value="help-links">
     {{ redirectInput("help-links/plugin") }}
-    {% for key,section in settings.sections %}
+    {% for key,section in settings.sections|json_decode %}
     	{{ forms.textField({
 		    label: section[0],
 		    instructions: 'Please enter the new heading or leave it as the existing value',

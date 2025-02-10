@@ -54,7 +54,7 @@
 			    	type: "singleline"
 			    }
 		    ],
-		    rows: settings['sections'],
+		    rows: settings['sections']|json_decode,
 			allowAdd: true,
 			allowReorder: true,
 			allowDelete: true
