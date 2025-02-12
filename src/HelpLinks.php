@@ -13,6 +13,7 @@ namespace adigital\helplinks;
 use adigital\helplinks\models\Preferences;
 use adigital\helplinks\services\HelpLinksService;
 use adigital\helplinks\widgets\HelpLinksWidget as HelpLinksWidgetWidget;
+use adigital\helplinks\models\Settings;
 
 use Craft;
 use craft\base\Model;
@@ -63,6 +64,13 @@ class HelpLinks extends Plugin
      * @var HelpLinks
      */
     public static HelpLinks $plugin;
+
+    /**
+     * Indicates that this plugin has settings accessible via the control panel
+     *
+     * @var bool
+     */
+    public bool $hasCpSettings = true;
 
     // Public Properties
     // =========================================================================
@@ -322,5 +330,32 @@ class HelpLinks extends Plugin
                 'label' => Craft::t('help-links', 'Import / Export the settings and links'),
             ],
         ];
+    }
+
+    /**
+     * Returns the Settings model for this plugin
+     *
+     * @return Model|null
+     */
+    protected function createSettingsModel(): ?Model
+    {
+        return new Settings();
+    }
+
+    /**
+     * Returns the settings rendered in the Control Panel
+     *
+     * @return string|null
+     * @throws Exception
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    protected function settingsHtml(): ?string
+    {
+        return Craft::$app->getView()->renderTemplate(
+            'help-links/settings',
+            ['settings' => $this->getSettings()]
+        );
     }
 }

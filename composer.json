@@ -32,7 +32,7 @@
     "extra": {
         "name": "Help Links",
         "handle": "help-links",
-        "hasCpSettings": false,
+        "hasCpSettings": true,
         "hasCpSection": true,
         "changelogUrl": "https://raw.githubusercontent.com/a-digital/help-links/craft3/CHANGELOG.md",
         "components": {

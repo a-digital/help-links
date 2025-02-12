@@ -13,9 +13,7 @@ namespace adigital\helplinks\models;
 use craft\base\Model;
 
 /**
- * HelpLinks Preferences Model
- *
- * This is a model used to define the plugin's settings.
+ * Sections Model
  *
  * Models are containers for data. Just about every time information is passed
  * between services, controllers, and templates in Craft, it’s passed via a model.
@@ -26,24 +24,21 @@ use craft\base\Model;
  * @package   HelpLinks
  * @since     1.0.0
  */
-class Preferences extends Model
+
+class Settings extends Model
 {
     // Public Properties
     // =========================================================================
 
     /**
-     * Some field model attribute
-     *
      * @var string
      */
     public string $widgetTitle = '';
 
     /**
-     * Some field model attribute
-     *
      * @var array
      */
-    public array $sections = [['']];
+    public array $sections = [];
 
     // Public Methods
     // =========================================================================
@@ -63,7 +58,8 @@ class Preferences extends Model
         return [
             [['widgetTitle'], 'string'],
             [['widgetTitle'], 'default', 'value' => ''],
-            
+
+            [['sections'], 'safe'],
             [['sections'], 'default', 'value' => [['']]],
         ];
     }
