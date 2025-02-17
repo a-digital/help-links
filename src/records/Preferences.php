@@ -58,6 +58,9 @@ class Preferences extends ActiveRecord
     public function getSections()
     {
         $sectionHeadings = json_decode($this->sections, true);
+        if(!$sectionHeadings) {
+            return [];
+        }
         $sectionHeadings = array_map(fn($h) => $h[0], $sectionHeadings);
         $sectionHeadings = array_filter($sectionHeadings);
         if (empty($sectionHeadings)) {
