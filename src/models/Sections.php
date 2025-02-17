@@ -59,10 +59,10 @@ class Sections extends Model
     public function rules(): array
     {
         return [
-            [['links'], 'default', 'value' => [['', '', '']]],
+            ['links', 'default', 'value' => [['', '', '']]],
             
-            [['position'], 'string'],
-            [['position'], 'default', 'value' => '0'],
+            ['position', 'string'],
+            ['position', 'default', 'value' => '0'],
         ];
     }
 }

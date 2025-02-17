@@ -248,7 +248,7 @@ class CpController extends Controller
             return false;
         }
         $settings = [];
-        $settings["plugin"]["widgetTitle"] = $model->getAttribute('widgetTitle');
+        $settings["plugin"]["widgetTitle"] = $model->getAttribute("widgetTitle");
         $sectionsData = json_decode($model->getAttribute('sections'), true);
         foreach($sectionsData as $section) {
 	        $sectionSettings = HelpLinks::$plugin->helpLinksService->returnSection($section[0]);

@@ -61,10 +61,10 @@ class Preferences extends Model
     public function rules(): array
     {
         return [
-            [['widgetTitle'], 'string'],
-            [['widgetTitle'], 'default', 'value' => ''],
+            ['widgetTitle', 'string'],
+            ['widgetTitle', 'default', 'value' => ''],
             
-            [['sections'], 'default', 'value' => [['']]],
+            ['sections', 'default', 'value' => [['']]],
         ];
     }
 }
