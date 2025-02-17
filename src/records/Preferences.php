@@ -10,6 +10,7 @@
 
 namespace adigital\helplinks\records;
 
+use Craft;
 use craft\db\ActiveRecord;
 
 /**
@@ -32,8 +33,12 @@ class Preferences extends ActiveRecord
 {
     // Public Static Methods
     // =========================================================================
+    /**
+     * @var mixed|null
+     */
+    private $sections;
 
-     /**
+    /**
      * Declares the name of the database table associated with this AR class.
      * By default this method returns the class name as the table name by calling [[Inflector::camel2id()]]
      * with prefix [[Connection::tablePrefix]]. For example if [[Connection::tablePrefix]] is `tbl_`,
@@ -48,5 +53,18 @@ class Preferences extends ActiveRecord
     public static function tableName(): string
     {
         return '{{%helplinks_preferences}}';
+    }
+
+    public function getSections()
+    {
+        $sectionHeadings = json_decode($this->sections, true);
+        $sectionHeadings = array_map(fn($h) => $h[0], $sectionHeadings);
+        $sectionHeadings = array_filter($sectionHeadings);
+        if (empty($sectionHeadings)) {
+            return [];
+        }
+        return Sections::find()
+            ->where(['heading' => $sectionHeadings])
+            ->all();
     }
 }

@@ -84,14 +84,18 @@ class CpController extends Controller
             $model = new Preferences();
         }
         $variables['settings'] = $model;
-        $variables['sections'] = json_decode($variables['settings']->getAttribute("sections"), true);
-        foreach ($variables['sections'] as $location) {
-			$friendlyUrl = strtolower(str_replace([" ", "-"], ["", ""], $location[0]));
-			if ($friendlyUrl === $subSection) {
-				$variables['selectedItem'] = $location[0];
-				$variables['subSectionTitle'] = $location[0];
-			}
-		}
+//        $variables['sections'] = json_decode($variables['settings']->getAttribute("sections"), true);
+        $sections = $model->getSections();
+        $variables['sections'] = $sections;
+        if($sections) {
+            foreach ($variables['sections'] as $location) {
+                $friendlyUrl = strtolower(str_replace([" ", "-"], ["", ""], $location[0]));
+                if ($friendlyUrl === $subSection) {
+                    $variables['selectedItem'] = $location[0];
+                    $variables['subSectionTitle'] = $location[0];
+                }
+            }
+        }
         $variables['crumbs'] = [
             [
                 'label' => $pluginName,
@@ -223,10 +227,12 @@ class CpController extends Controller
         $sections = [];
         $count = 1;
         $sectionsData = json_decode($model->getAttribute('sections'), true);
-        foreach($sectionsData as $section) {
-	        HelpLinks::$plugin->helpLinksService->createSection($section[0], $count);
-	        $sections[] = $section[0];
-	        $count++;
+        if($sectionsData) {
+            foreach($sectionsData as $section) {
+                HelpLinks::$plugin->helpLinksService->createSection($section[0], $count);
+                $sections[] = $section[0];
+                $count++;
+            }
         }
         HelpLinks::$plugin->helpLinksService->removeSections($sections);
 

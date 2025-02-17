@@ -37,8 +37,20 @@
 	    	type: "singleline"
 	    }
     ],
-    rows: sectionSettings['links'],
+{#    rows: sectionSettings['links'],#}
+	rows: [
+		{% for section in sections %}
+			{% for link in section.links %}
+				{
+					heading: "{{ section.heading }}",
+					value: "{{ link[0] }}",
+					url: "{{ link[1] }}",
+					instruction: "{{ link[2] }}"
+				},
+			{% endfor %}
+		{% endfor %}
+	],
 	allowAdd: true,
 	allowReorder: true,
 	allowDelete: true
-}) }}
+%}) }}
