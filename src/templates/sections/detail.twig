@@ -28,13 +28,17 @@
 {% set navItems = {
     'heading': { heading: "Sections"|t },
 } %}
-{% for location in settings["sections"] %}
-	{% set friendlyUrl = location[0]|replace({" ": "", "-": ""})|lower %}
-	{% set navItems = navItems |merge({
-	    (friendlyUrl): {
-	        title: location[0]|t("help-links"),
-	    },
-	}) %}
+{% set selectedItem = craft.app.request.getSegment(3)|default("overview") %}
+{% for location in settings["sections"]|json_decode %}
+    {% set friendlyUrl = location[0]|replace({" ": "", "-": ""})|lower %}
+    {% set navItems = navItems |merge({
+        (friendlyUrl): {
+            title: location[0]|t("help-links"),
+        },
+    }) %}
+    {% if friendlyUrl == selectedItem %}
+        {% set selectedItem = location[0]|t("help-links") %}
+    {% endif %}
 {% endfor %}
 
 {% block sidebar %}

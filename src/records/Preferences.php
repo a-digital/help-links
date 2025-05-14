@@ -55,9 +55,9 @@ class Preferences extends ActiveRecord
         return '{{%helplinks_preferences}}';
     }
 
-    public function getSections()
+    public function getSections($sections)
     {
-        $sectionHeadings = json_decode($this->sections, true);
+        $sectionHeadings = json_decode($sections, true);
         if(!$sectionHeadings) {
             return [];
         }

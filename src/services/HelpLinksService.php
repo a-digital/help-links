@@ -53,6 +53,9 @@ class HelpLinksService extends Component
      */
     public function returnSection($section): bool|array
     {
+        if (!$section) {
+            return false;
+        }
         $model = SectionsRecord::findOne(["heading" => $section]);
         if ($model === null) {
             return false;
@@ -214,11 +217,14 @@ class HelpLinksService extends Component
         $pluginSettings = (array)$jsonSettings->plugin;
         $sectionSettings = $jsonSettings->sections;
 
-        $plugin = Craft::$app->getPlugins()->getPlugin("help-links");
-        if (!$plugin) {
-            return false;
+        $model = Preferences::find()->one();
+        if (!$model) {
+            $model = new Preferences();
         }
-        Craft::$app->getPlugins()->savePluginSettings($plugin, $pluginSettings);
+        $model->setAttribute('widgetTitle', $pluginSettings['widgetTitle']);
+        $model->setAttribute('sections', $pluginSettings['sections']);
+        $model->save();
+
         $sections = [];
         $count = 1;
         foreach($sectionSettings as $key => $section) {

@@ -79,20 +79,21 @@ class CpController extends Controller
         $variables['title'] = $templateTitle;
         $variables['selectedSubnavItem'] = 'sections';
         $variables['subSectionTitle'] = $subSectionTitle;
+        $variables['selectedItem'] = false;
         $model = Preferences::find()->one();
         if (!$model) {
             $model = new Preferences();
         }
         $variables['settings'] = $model;
 //        $variables['sections'] = json_decode($variables['settings']->getAttribute("sections"), true);
-        $sections = $model->getSections();
+        $sections = $model->getSections($model->getAttribute('sections'));
         $variables['sections'] = $sections;
-        if($sections) {
+        if ($sections) {
             foreach ($variables['sections'] as $location) {
-                $friendlyUrl = strtolower(str_replace([" ", "-"], ["", ""], $location[0]));
+                $friendlyUrl = strtolower(str_replace([" ", "-"], ["", ""], $location->heading));
                 if ($friendlyUrl === $subSection) {
-                    $variables['selectedItem'] = $location[0];
-                    $variables['subSectionTitle'] = $location[0];
+                    $variables['selectedItem'] = $location->heading;
+                    $variables['subSectionTitle'] = $location->heading;
                 }
             }
         }
