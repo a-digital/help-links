@@ -5,9 +5,13 @@ namespace craft\helplinks\migrations;
 use adigital\helplinks\records\Preferences;
 use craft\db\Migration;
 use Craft;
+use yii\db\Exception;
 
 class m241120_144302_addPreferencesTable extends Migration
 {
+    /**
+     * @throws Exception
+     */
     public function safeUp(): bool
     {
         if ($this->createTables()) {
@@ -51,14 +55,19 @@ class m241120_144302_addPreferencesTable extends Migration
         return $tablesCreated;
     }
 
+    /**
+     * @return bool
+     * @throws Exception
+     */
     protected function moveSettings(): bool
     {
         $plugin = Craft::$app->getPlugins()->getPlugin('helplinks');
         $settings = $plugin->getSettings();
 
         $model = new Preferences();
-        $model->setAttribute('widgetTitle', $settings->widgetTitle);
-        $model->setAttribute('sections', $settings->sections);
+        if ($settings) {
+            $model->setAttributes($settings->getAttributes());
+        }
         $model->save();
 
         Craft::$app->plugins->savePluginSettings($plugin, []);

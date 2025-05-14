@@ -30,11 +30,11 @@ Create your section headings in the plugin settings page. Then click Help Links 
 
 ## Pre Populating Help Links
 
-If like us you are going to be using this for multiple clients but most of the links will remain the same, then you can pre-populate your settings and links for this plugin. There are 2 ways of doing this.
+If like us, you are going to be using this for multiple clients but most of the links will remain the same, then you can pre-populate your settings and links for this plugin. There are 2 ways of doing this.
 
 ### Import / Export using the plugin
 
-We've created an Import / Export page within the plugin which you can use. Once you have manually populated the links on one site, you can export these to a JSON formatted file. This file can then be imported into a clean install and it will generate all of your links for you. From here you can then edit them as needed to make them site specific. This is our recommended method for pre populating your links.
+We've created an Import / Export page within the plugin which you can use. Once you have manually populated the links on one site, you can export these to a JSON formatted file. This file can be imported into a clean install, and it will then generate all of your links for you. From here you can then edit them as needed to make them site specific. This is our recommended method for pre-populating your links.
 
 ### Use a migration
 
@@ -43,7 +43,6 @@ You can also create a content migration and run it within the CMS once the plugi
 A code example can be found below for setting up a migration to run with this plugin, just make sure you add `use adigital\helplinks\HelpLinks;` to the top of the file.
 
 ```
-$plugin = Craft::$app->plugins->getPlugin("help-links");
 $settings = [
 	"widgetTitle" => "Help Links",
 	"sections" => [
@@ -51,19 +50,19 @@ $settings = [
 		["Support"]
 	]
 ];
-Craft::$app->plugins->savePluginSettings($plugin, $settings);
+HelpLinks::$plugin->helpLinksService->updateSettings($settings['widgetTitle'], $settings['sections']);
 
 $request = [];
 $request["heading"] = "Documentation";
 $request["position"] = "1";
 $request["links"][] = [
 	"Test",
-	"http://www.test.com",
+	"https://www.test.com",
 	"This is a test"
 ];
 $request["links"][] = [
 	"Another",
-	"http://www.google.co.uk",
+	"https://www.google.co.uk",
 	"(Google)"
 ];
 HelpLinks::$plugin->helpLinksService->generateSection($request);

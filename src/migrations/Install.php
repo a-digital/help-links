@@ -1,6 +1,6 @@
 <?php
 /**
- * Help Links plugin for Craft CMS 3.x
+ * Help Links plugin for Craft CMS 5.x
  *
  * Define useful links to be added to the dashboard for clients.
  *
@@ -11,6 +11,7 @@
 namespace adigital\helplinks\migrations;
 
 use adigital\helplinks\records\Preferences;
+use adigital\helplinks\records\Sections;
 use Craft;
 use craft\db\Migration;
 
@@ -58,7 +59,6 @@ class Install extends Migration
             $this->createIndexes();
             // Refresh the db schema caches
             Craft::$app->db->schema->refresh();
-            $this->insertDefaultData();
         }
 
         return true;
@@ -95,11 +95,11 @@ class Install extends Migration
         $tablesCreated = false;
 
     // helplinks_sections table
-        $tableSchema = Craft::$app->db->schema->getTableSchema('{{%helplinks_sections}}');
+        $tableSchema = Craft::$app->db->schema->getTableSchema(Sections::tableName());
         if ($tableSchema === null) {
             $tablesCreated = true;
             $this->createTable(
-                '{{%helplinks_sections}}',
+                Sections::tableName(),
                 [
                     'id' => $this->primaryKey(),
                 // Custom columns in the table
@@ -147,19 +147,10 @@ class Install extends Migration
     // helplinks_sections table
         $this->createIndex(
             $this->db->getIndexName(),
-            '{{%helplinks_sections}}',
+            Sections::tableName(),
             'heading',
             true
         );
-    }
-
-    /**
-     * Populates the DB with the default data.
-     *
-     * @return void
-     */
-    protected function insertDefaultData(): void
-    {
     }
 
     /**
@@ -170,7 +161,7 @@ class Install extends Migration
     protected function removeTables(): void
     {
     // helplinks_sections table
-        $this->dropTableIfExists('{{%helplinks_sections}}');
+        $this->dropTableIfExists(Sections::tableName());
         $this->dropTableIfExists(Preferences::tableName());
     }
 }

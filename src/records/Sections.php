@@ -1,6 +1,6 @@
 <?php
 /**
- * Help Links plugin for Craft CMS 3.x
+ * Help Links plugin for Craft CMS 5.x
  *
  * Define useful links to be added to the dashboard for clients.
  *
@@ -35,7 +35,7 @@ class Sections extends ActiveRecord
 
      /**
      * Declares the name of the database table associated with this AR class.
-     * By default this method returns the class name as the table name by calling [[Inflector::camel2id()]]
+     * By default, this method returns the class name as the table name by calling [[Inflector::camel2id()]]
      * with prefix [[Connection::tablePrefix]]. For example if [[Connection::tablePrefix]] is `tbl_`,
      * `Customer` becomes `tbl_customer`, and `OrderItem` becomes `tbl_order_item`. You may override this method
      * if the table is not named after this convention.

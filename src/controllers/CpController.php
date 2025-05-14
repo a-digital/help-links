@@ -1,6 +1,6 @@
 <?php
 /**
- * Help Links plugin for Craft CMS 3.x
+ * Help Links plugin for Craft CMS 5.x
  *
  * Define useful links to be added to the dashboard for clients.
  *
@@ -12,15 +12,16 @@ namespace adigital\helplinks\controllers;
 
 use adigital\helplinks\HelpLinks;
 
-use adigital\helplinks\records\Preferences;
 use Craft;
 use craft\errors\MissingComponentException;
 use craft\web\Controller;
 use craft\helpers\UrlHelper;
 use JsonException;
+use Throwable;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\web\BadRequestHttpException;
-use yii\web\NotFoundHttpException;
+use yii\web\MethodNotAllowedHttpException;
 use yii\web\Response;
 
 /**
@@ -80,10 +81,7 @@ class CpController extends Controller
         $variables['selectedSubnavItem'] = 'sections';
         $variables['subSectionTitle'] = $subSectionTitle;
         $variables['selectedItem'] = false;
-        $model = Preferences::find()->one();
-        if (!$model) {
-            $model = new Preferences();
-        }
+        $model = HelpLinks::$plugin->helpLinksService->fetchSettings(true);
         $variables['settings'] = $model;
 //        $variables['sections'] = json_decode($variables['settings']->getAttribute("sections"), true);
         $sections = $model->getSections($model->getAttribute('sections'));
@@ -127,8 +125,10 @@ class CpController extends Controller
 
     /**
      * @return Response
-     * @throws MissingComponentException
      * @throws BadRequestHttpException
+     * @throws JsonException
+     * @throws MissingComponentException
+     * @throws Exception
      */
     public function actionSaveSections(): Response
     {
@@ -155,10 +155,7 @@ class CpController extends Controller
                 'url' => UrlHelper::cpUrl('help-links')
             ]
         ];
-        $model = Preferences::find()->one();
-        if (!$model) {
-            $model = new Preferences();
-        }
+        $model = HelpLinks::$plugin->helpLinksService->fetchSettings(true);
         $variables['settings'] = $model;
 	    
 	    return $this->renderTemplate('help-links/rename', $variables);
@@ -167,8 +164,8 @@ class CpController extends Controller
     /**
      * @return Response
      * @throws BadRequestHttpException
+     * @throws Exception
      * @throws MissingComponentException
-     * @throws NotFoundHttpException
      */
     public function actionSaveRename(): Response
     {
@@ -194,10 +191,7 @@ class CpController extends Controller
                 'url' => UrlHelper::cpUrl('help-links')
             ]
         ];
-        $model = Preferences::find()->one();
-        if (!$model) {
-            $model = new Preferences();
-        }
+        $model = HelpLinks::$plugin->helpLinksService->fetchSettings(true);
         $variables['settings'] = $model;
 	    
 	    return $this->renderTemplate('help-links/settings', $variables);
@@ -208,22 +202,18 @@ class CpController extends Controller
      *
      * @return Response|null
      * @throws BadRequestHttpException
+     * @throws Exception
+     * @throws JsonException
+     * @throws MethodNotAllowedHttpException
      * @throws MissingComponentException
-     * @throws NotFoundHttpException
      * @throws StaleObjectException
+     * @throws Throwable
      */
     public function actionSavePluginSettings(): ?Response
     {
         $this->requirePostRequest();
 
-        $model = Preferences::find()->one();
-        if (!$model) {
-            $model = new Preferences();
-        }
-
-        $model->setAttribute('widgetTitle', Craft::$app->getRequest()->getParam('settings[widgetTitle]'));
-        $model->setAttribute('sections', Craft::$app->getRequest()->getParam('settings[sections]'));
-        $model->save();
+        $model = HelpLinks::$plugin->helpLinksService->updateSettings(Craft::$app->getRequest()->getParam('settings[widgetTitle]'), Craft::$app->getRequest()->getParam('settings[sections]'));
 
         $sections = [];
         $count = 1;
@@ -249,8 +239,7 @@ class CpController extends Controller
      */
     public function actionExport(): bool|string
     {
-        $model = Preferences::find()->one();
-
+        $model = HelpLinks::$plugin->helpLinksService->fetchSettings();
         if (!$model) {
             return false;
         }
@@ -283,10 +272,7 @@ class CpController extends Controller
                 'url' => UrlHelper::cpUrl('help-links')
             ]
         ];
-        $model = Preferences::find()->one();
-        if (!$model) {
-            $model = new Preferences();
-        }
+        $model = HelpLinks::$plugin->helpLinksService->fetchSettings(true);
         $variables['settings'] = $model;
 	    
 	    return $this->renderTemplate('help-links/import', $variables);
@@ -297,9 +283,12 @@ class CpController extends Controller
      *
      * @return Response
      * @throws BadRequestHttpException
+     * @throws Exception
      * @throws JsonException
+     * @throws MethodNotAllowedHttpException
      * @throws MissingComponentException
      * @throws StaleObjectException
+     * @throws Throwable
      */
     public function actionProcessImport(): Response
     {

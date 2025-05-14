@@ -1,6 +1,6 @@
 <?php
 /**
- * Help Links plugin for Craft CMS 3.x
+ * Help Links plugin for Craft CMS 5.x
  *
  * Define useful links to be added to the dashboard for clients.
  *
@@ -17,7 +17,7 @@
  * Don't edit this file, instead copy it to 'craft/config' as 'help-links.php'
  * and make your changes there to override default settings.
  *
- * Once copied to 'craft/config', this file will be multi-environment aware as
+ * Once copied to 'craft/config', this file will be multi environment aware as
  * well, so you can have different settings groups for each environment, just as
  * you do for 'general.php'
  */

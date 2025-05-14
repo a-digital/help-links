@@ -1,6 +1,6 @@
 <?php
 /**
- * Help Links plugin for Craft CMS 3.x
+ * Help Links plugin for Craft CMS 5.x
  *
  * Define useful links to be added to the dashboard for clients.
  *
@@ -10,33 +10,25 @@
 
 namespace adigital\helplinks;
 
-use adigital\helplinks\models\Preferences;
 use adigital\helplinks\services\HelpLinksService;
 use adigital\helplinks\widgets\HelpLinksWidget as HelpLinksWidgetWidget;
 
 use Craft;
-use craft\base\Model;
 use craft\base\Plugin;
 use craft\elements\User;
-use craft\services\Plugins;
 use craft\services\Dashboard;
 use craft\services\UserPermissions;
-use craft\events\PluginEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterUserPermissionsEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\web\UrlManager;
 
 use Throwable;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
 use yii\base\Event;
-use yii\base\Exception;
 
 /**
  * Craft plugins are very much like little applications in and of themselves. We’ve made
- * it as simple as we can, but the training wheels are off. A little prior knowledge is
+ * it as simple as we can, but the training wheels are off. A little bit of prior knowledge is
  * going to be required to write a plugin.
  *
  * For the purposes of the plugin docs, we’re going to assume that you know PHP and SQL,
@@ -153,17 +145,6 @@ class HelpLinks extends Plugin
             Dashboard::EVENT_REGISTER_WIDGET_TYPES,
             static function (RegisterComponentTypesEvent $event) {
                 $event->types[] = HelpLinksWidgetWidget::class;
-            }
-        );
-
-        // Do something after we're installed
-        Event::on(
-            Plugins::class,
-            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin === $this) {
-                    // We were just installed
-                }
             }
         );
     }

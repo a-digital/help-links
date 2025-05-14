@@ -1,6 +1,6 @@
 <?php
 /**
- * Help Links plugin for Craft CMS 3.x
+ * Help Links plugin for Craft CMS 5.x
  *
  * Define useful links to be added to the dashboard for clients.
  *
@@ -10,16 +10,14 @@
 
 namespace adigital\helplinks\services;
 
-use adigital\helplinks\HelpLinks;
 use adigital\helplinks\records\Preferences;
 use adigital\helplinks\records\Sections as SectionsRecord;
 
-use Craft;
 use craft\base\Component;
-use craft\errors\MissingComponentException;
 use JsonException;
+use Throwable;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
-use yii\web\NotFoundHttpException;
 
 /**
  * HelpLinksService Service
@@ -80,6 +78,7 @@ class HelpLinksService extends Component
      * @param $section
      * @param $count
      * @return SectionsRecord
+     * @throws Exception
      * @throws JsonException
      */
     public function createSection($section, $count): SectionsRecord
@@ -114,6 +113,7 @@ class HelpLinksService extends Component
      * @param $request
      * @return SectionsRecord|null
      * @throws JsonException
+     * @throws Exception
      */
     public function saveSection($request): ?SectionsRecord
     {
@@ -140,9 +140,10 @@ class HelpLinksService extends Component
      *     HelpLinks::$plugin->helpLinksService->importSection()
      *
      * @param string $title
-     * @param array $links
      * @param int $count
+     * @param array $links
      * @return SectionsRecord|null
+     * @throws Exception
      * @throws JsonException
      */
     public function importSection(string $title, int $count, array $links = []): ?SectionsRecord
@@ -172,6 +173,7 @@ class HelpLinksService extends Component
      *
      * @param $request
      * @return SectionsRecord|null
+     * @throws Exception
      * @throws JsonException
      */
     public function generateSection($request): ?SectionsRecord
@@ -190,6 +192,25 @@ class HelpLinksService extends Component
         return $model;
     }
 
+    public function fetchSettings($new = false)
+    {
+        $model = Preferences::find()->one();
+        if ($new && !$model) {
+            $model = new Preferences();
+        }
+        return $model;
+    }
+
+    public function updateSettings($widgetTitle, $sections)
+    {
+        $model = $this->fetchSettings();
+
+        $model->setAttribute('widgetTitle', $widgetTitle);
+        $model->setAttribute('sections', $sections);
+        $model->save();
+        return $model;
+    }
+
     /**
      * This function can literally be anything you want, and you can have as many service
      * functions as you want
@@ -200,8 +221,10 @@ class HelpLinksService extends Component
      *
      * @param $attachments
      * @return bool
+     * @throws Exception
      * @throws JsonException
      * @throws StaleObjectException
+     * @throws Throwable
      */
     public function importSettings($attachments): bool
     {
@@ -217,13 +240,7 @@ class HelpLinksService extends Component
         $pluginSettings = (array)$jsonSettings->plugin;
         $sectionSettings = $jsonSettings->sections;
 
-        $model = Preferences::find()->one();
-        if (!$model) {
-            $model = new Preferences();
-        }
-        $model->setAttribute('widgetTitle', $pluginSettings['widgetTitle']);
-        $model->setAttribute('sections', $pluginSettings['sections']);
-        $model->save();
+        $this->updateSettings($pluginSettings['widgetTitle'], $pluginSettings['sections']);
 
         $sections = [];
         $count = 1;
@@ -249,6 +266,7 @@ class HelpLinksService extends Component
      * @param $sectionTitles
      * @return bool
      * @throws StaleObjectException
+     * @throws Throwable
      */
     public function removeSections($sectionTitles): bool
     {
@@ -273,8 +291,7 @@ class HelpLinksService extends Component
      *
      * @param $request
      * @return bool
-     * @throws MissingComponentException
-     * @throws NotFoundHttpException
+     * @throws Exception
      */
     public function saveRename($request): bool
     {
@@ -292,7 +309,7 @@ class HelpLinksService extends Component
             }
         }
 
-        $model = Preferences::find()->one();
+        $model = $this->fetchSettings();
         if (!$model) {
             return false;
         }

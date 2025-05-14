@@ -1,6 +1,6 @@
 <?php
 /**
- * Help Links plugin for Craft CMS 3.x
+ * Help Links plugin for Craft CMS 5.x
  *
  * Define useful links to be added to the dashboard for clients.
  *
@@ -102,8 +102,6 @@ class HelpLinksWidget extends Widget
 		        $sections[] = $sectionSettings;
 	        }
         }
-        // settings
-        // sections
 
         return Craft::$app->getView()->renderTemplate(
             'help-links/_components/widgets/HelpLinksWidget_body',
