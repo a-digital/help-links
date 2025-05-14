@@ -1,5 +1,9 @@
 # Help Links Changelog
 
+## 3.0.0 - 2025-05-14
+### Added
+- Craft 5 version released
+
 ## 2.0.0 - 2022-08-05
 ### Added
 - Craft 4 version released
