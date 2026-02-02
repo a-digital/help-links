@@ -1,5 +1,9 @@
 # Help Links Changelog
 
+## 3.0.1 - 2026-02-02
+### Fixed
+- Arrayy\Array_first replaced as it caused php errors after Craft 5.9 updates
+
 ## 3.0.0 - 2025-05-14
 ### Added
 - Craft 5 version released

@@ -2,7 +2,7 @@
     "name": "adigital/help-links",
     "description": "Define useful links to be added to the dashboard for clients.",
     "type": "craft-plugin",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "keywords": [
         "craft",
         "cms",

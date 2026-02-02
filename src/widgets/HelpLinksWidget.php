@@ -20,7 +20,6 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 use yii\base\Exception;
-use function Arrayy\array_first;
 
 /**
  * Help Links Widget
@@ -98,7 +97,7 @@ class HelpLinksWidget extends Widget
         $sectionsData = json_decode($settings->getAttribute("sections"), true);
         if ($sectionsData) {
 	        foreach($sectionsData as $section) {
-		        $sectionSettings = HelpLinks::$plugin->helpLinksService->returnSection(array_first($section));
+		        $sectionSettings = HelpLinks::$plugin->helpLinksService->returnSection($section[0]);
 		        $sections[] = $sectionSettings;
 	        }
         }
